@@ -1,4 +1,4 @@
-// Bu satır, sayfa başlığı gibi meta verileri tanımlamanızı sağlar
+import { ClerkProvider } from '@clerk/nextjs' // Bunu import edin
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
@@ -6,18 +6,19 @@ export const metadata: Metadata = {
   description: 'Harika bir öğrenme platformu',
 };
 
-// Bu fonksiyon ana şablonunuzdur
 export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
   return (
-    <html lang="tr">
-      <body>
-        {/* children, page.tsx gibi diğer sayfalarınızın içeriğidir */}
-        {children}
-      </body>
-    </html>
+    // <ClerkProvider> etiketini buraya ekleyin
+    <ClerkProvider>
+      <html lang="tr">
+        <body>
+          {children}
+        </body>
+      </html>
+    </ClerkProvider>
   );
 }
