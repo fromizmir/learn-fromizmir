@@ -1,4 +1,4 @@
-"use client"; // Bu satır önemlidir, bileşenin tarayıcıda çalışacağını belirtir.
+"use client";
 
 import { UserButton, SignedIn, SignedOut } from "@clerk/nextjs";
 import Link from "next/link";
@@ -13,17 +13,15 @@ const Header = () => {
       </div>
       <div>
         <SignedIn>
-          {/* Bu kısım sadece kullanıcı giriş yaptığında görünür */}
           <UserButton afterSignOutUrl="/" />
         </SignedIn>
         <SignedOut>
-          {/* Bu kısım sadece misafirler için görünür */}
           <>
             <Link href="/sign-in" style={{ marginRight: '10px' }}>
-              Giriş Yap
+              Sign In
             </Link>
             <Link href="/sign-up">
-              Kayıt Ol
+              Sign Up
             </Link>
           </>
         </SignedOut>
