@@ -1,9 +1,7 @@
-import { authMiddleware } from "@clerk/nextjs/server"; // Doğru import adresi burası
+import { clerkMiddleware } from '@clerk/nextjs/server';
 
-// Bu ayar, sitenizdeki tüm sayfaların varsayılan olarak
-// herkese açık olmasını sağlar.
-export default authMiddleware({});
+export default clerkMiddleware();
 
 export const config = {
-  matcher: ["/((?!.+\\.[\\w]+$|_next).*)", "/", "/(api|trpc)(.*)"],
+  matcher: ['/((?!.*\\..*|_next).*)', '/', '/(api|trpc)(.*)'],
 };
