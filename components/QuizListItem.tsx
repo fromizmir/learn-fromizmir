@@ -3,11 +3,9 @@
 import Link from 'next/link';
 
 export default function QuizListItem({ quiz }: { quiz: any }) {
-  // Eğer API'den slug gelmiyorsa güvenlik için ID'yi kullanmaya devam et
-  const quizUrl = quiz.slug ? `/quizzes/${quiz.slug}` : `/quizzes/${quiz.id}`;
-
   return (
-    <Link href={quizUrl} style={{ textDecoration: 'none', color: 'inherit' }}>
+    // Link'i doğrudan quiz.id ile oluşturuyoruz
+    <Link href={`/quizzes/${quiz.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
       <div 
         style={{ 
           marginBottom: '15px', 
