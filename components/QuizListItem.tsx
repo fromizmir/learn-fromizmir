@@ -1,11 +1,13 @@
-"use client"; // Bu, bileşenin interaktif olabileceğini belirtir
+"use client";
 
 import Link from 'next/link';
 
-// Dışarıdan tek bir quiz'in bilgisini 'prop' olarak alır
 export default function QuizListItem({ quiz }: { quiz: any }) {
+  // Eğer API'den slug gelmiyorsa güvenlik için ID'yi kullanmaya devam et
+  const quizUrl = quiz.slug ? `/quizzes/${quiz.slug}` : `/quizzes/${quiz.id}`;
+
   return (
-    <Link href={`/quizzes/${quiz.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+    <Link href={quizUrl} style={{ textDecoration: 'none', color: 'inherit' }}>
       <div 
         style={{ 
           marginBottom: '15px', 
@@ -15,7 +17,6 @@ export default function QuizListItem({ quiz }: { quiz: any }) {
           cursor: 'pointer', 
           transition: 'background-color 0.2s' 
         }}
-        // Fare hareketleri artık bu istemci bileşeninin içinde
         onMouseOver={e => e.currentTarget.style.backgroundColor = '#f9f9f9'}
         onMouseOut={e => e.currentTarget.style.backgroundColor = 'transparent'}
       >
