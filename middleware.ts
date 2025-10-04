@@ -1,8 +1,8 @@
 import { authMiddleware } from "@clerk/nextjs/server";
 
 export default authMiddleware({
-  // Bu rotalar, giriş yapmamış kullanıcılar dahil herkes tarafından erişilebilir.
-  publicRoutes: ["/", "/sign-in", "/sign-up"],
+  // publicRoutes listesine "/quizzes" eklendi
+  publicRoutes: ["/", "/sign-in", "/sign-up", "/quizzes"],
 });
 
 export const config = {

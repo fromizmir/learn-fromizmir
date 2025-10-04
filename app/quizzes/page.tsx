@@ -8,35 +8,20 @@ async function getQuizzes() {
   if (!API_KEY) {
     throw new Error('API Anahtarı (LOLONOLO_API_KEY) Vercel ortam değişkenlerinde bulunamadı.');
   }
-
   const res = await fetch(API_ENDPOINT, {
-    headers: {
-      'Authorization': `Bearer ${API_KEY}`,
-    },
+    headers: { 'Authorization': `Bearer ${API_KEY}` },
     cache: 'no-store',
   });
-
   if (!res.ok) {
     throw new Error(`API Hatası: Sunucudan ${res.status} koduyla yanıt alındı. (${res.statusText})`);
   }
-
   return res.json();
 }
 
-// --- DEĞİŞİKLİK BURADA BAŞLIYOR ---
 export default async function QuizzesPage() {
   try {
     const quizzes = await getQuizzes();
-
-    // Gelen verinin bir dizi olup olmadığını kontrol edelim
-    if (!Array.isArray(quizzes)) {
-      return (
-        <main style={{ padding: '40px', color: 'orange' }}>
-          <h1>Veri Formatı Hatalı</h1>
-          <p>API'den beklenen formatta veri gelmedi.</p>
-        </main>
-      );
-    }
+    if (!Array.isArray(quizzes)) return <p>Veri formatı hatalı.</p>;
 
     return (
       <main style={{ padding: '40px' }}>
@@ -46,19 +31,20 @@ export default async function QuizzesPage() {
           {quizzes.map((quiz: any) => (
             <div key={quiz.id} style={{ marginBottom: '20px', border: '1px solid #eee', padding: '15px', borderRadius: '8px' }}>
               <h2>{quiz.title}</h2>
-              <div dangerouslySetInnerHTML={{ __html: quiz.description }} />
+              {/* --- DEĞİŞİKLİK BURADA --- */}
+              {/* Eğer description varsa ve boş değilse, o zaman render et */}
+              {quiz.description && (
+                <div dangerouslySetInnerHTML={{ __html: quiz.description }} />
+              )}
             </div>
           ))}
         </div>
       </main>
     );
   } catch (error) {
-    // Eğer getQuizzes fonksiyonu hata verirse, boş sayfa göndermek yerine,
-    // hata mesajını doğrudan sayfanın kendisine kırmızı renkle yazdır.
+    // Hata yakalama bloğu aynı kalıyor...
     let errorMessage = 'Bilinmeyen bir hata oluştu.';
-    if (error instanceof Error) {
-      errorMessage = error.message;
-    }
+    if (error instanceof Error) { errorMessage = error.message; }
     return (
       <main style={{ padding: '40px', color: 'red' }}>
         <h1>Sayfa Yüklenirken Bir Hata Oluştu</h1>
