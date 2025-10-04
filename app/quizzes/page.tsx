@@ -1,57 +1,37 @@
-// Dosya Yolu: app/quizzes/page.tsx
+import Link from 'next/link'; // Link bileşenini import ediyoruz
 
 async function getQuizzes() {
   // Bu fonksiyon aynı kalıyor...
   const API_ENDPOINT = 'https://fromizmir.com/wp-json/lolonolo-quiz/v16/quizzes';
   const API_KEY = process.env.LOLONOLO_API_KEY;
-
-  if (!API_KEY) {
-    throw new Error('API Anahtarı (LOLONOLO_API_KEY) Vercel ortam değişkenlerinde bulunamadı.');
-  }
+  if (!API_KEY) { throw new Error('API Key not found.'); }
   const res = await fetch(API_ENDPOINT, {
     headers: { 'Authorization': `Bearer ${API_KEY}` },
     cache: 'no-store',
   });
-  if (!res.ok) {
-    throw new Error(`API Hatası: Sunucudan ${res.status} koduyla yanıt alındı. (${res.statusText})`);
-  }
+  if (!res.ok) { throw new Error('Failed to fetch quizzes.'); }
   return res.json();
 }
 
 export default async function QuizzesPage() {
-  try {
-    const quizzes = await getQuizzes();
-    if (!Array.isArray(quizzes)) return <p>Veri formatı hatalı.</p>;
-
-    return (
-      <main style={{ padding: '40px' }}>
-        <h1>Tüm Quizler</h1>
-        <p>Aşağıdaki quizlerden birini seçerek başlayın.</p>
-        <div style={{ marginTop: '20px' }}>
-          {quizzes.map((quiz: any) => (
-            <div key={quiz.id} style={{ marginBottom: '20px', border: '1px solid #eee', padding: '15px', borderRadius: '8px' }}>
+  const quizzes = await getQuizzes();
+  return (
+    <main style={{ padding: '40px', maxWidth: '800px', margin: '0 auto' }}>
+      <h1>All Quizzes</h1>
+      <p>Start by selecting one of the quizzes below.</p>
+      <div style={{ marginTop: '20px' }}>
+        {Array.isArray(quizzes) && quizzes.map((quiz: any) => (
+          // Her bir quiz'i bir Link bileşeni ile sarmalıyoruz
+          <Link key={quiz.id} href={`/quizzes/${quiz.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+            <div style={{ marginBottom: '15px', border: '1px solid #eee', padding: '20px', borderRadius: '8px', cursor: 'pointer', transition: 'background-color 0.2s' }} 
+                 onMouseOver={e => e.currentTarget.style.backgroundColor = '#f9f9f9'}
+                 onMouseOut={e => e.currentTarget.style.backgroundColor = 'transparent'}>
               <h2>{quiz.title}</h2>
-              {/* --- DEĞİŞİKLİK BURADA --- */}
-              {/* Eğer description varsa ve boş değilse, o zaman render et */}
-              {quiz.description && (
-                <div dangerouslySetInnerHTML={{ __html: quiz.description }} />
-              )}
+              {quiz.description && <div dangerouslySetInnerHTML={{ __html: quiz.description }} />}
             </div>
-          ))}
-        </div>
-      </main>
-    );
-  } catch (error) {
-    // Hata yakalama bloğu aynı kalıyor...
-    let errorMessage = 'Bilinmeyen bir hata oluştu.';
-    if (error instanceof Error) { errorMessage = error.message; }
-    return (
-      <main style={{ padding: '40px', color: 'red' }}>
-        <h1>Sayfa Yüklenirken Bir Hata Oluştu</h1>
-        <pre style={{ whiteSpace: 'pre-wrap', background: '#ffebeb', padding: '10px', borderRadius: '8px' }}>
-          {errorMessage}
-        </pre>
-      </main>
-    );
-  }
+          </Link>
+        ))}
+      </div>
+    </main>
+  );
 }
