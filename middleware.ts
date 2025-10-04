@@ -1,8 +1,7 @@
 import { authMiddleware } from "@clerk/nextjs/server";
 
 export default authMiddleware({
-  // Aşağıdaki rotalar koruma dışında bırakılacaktır.
-  // Herkes bu sayfalara erişebilir.
+  // Bu rotalar, giriş yapmamış kullanıcılar dahil herkes tarafından erişilebilir.
   publicRoutes: ["/", "/sign-in", "/sign-up"],
 });
 
