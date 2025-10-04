@@ -11,7 +11,7 @@ const Header = () => {
           <strong>Learn From Izmir</strong>
         </Link>
         <Link href="/quizzes">
-          Quizler
+          Quizzes
         </Link>
       </div>
       <div>
