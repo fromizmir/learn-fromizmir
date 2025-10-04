@@ -6,9 +6,12 @@ import Link from "next/link";
 const Header = () => {
   return (
     <header style={{ display: 'flex', justifyContent: 'space-between', padding: '20px', borderBottom: '1px solid #eee' }}>
-      <div>
+      <div style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
         <Link href="/">
           <strong>Learn From Izmir</strong>
+        </Link>
+        <Link href="/quizzes">
+          Quizler
         </Link>
       </div>
       <div>
