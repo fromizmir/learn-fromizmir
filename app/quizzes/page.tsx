@@ -1,7 +1,6 @@
-import Link from 'next/link'; // Link bileşenini import ediyoruz
+import QuizListItem from '@/components/QuizListItem'; // Yeni bileşenimizi import ediyoruz
 
 async function getQuizzes() {
-  // Bu fonksiyon aynı kalıyor...
   const API_ENDPOINT = 'https://fromizmir.com/wp-json/lolonolo-quiz/v16/quizzes';
   const API_KEY = process.env.LOLONOLO_API_KEY;
   if (!API_KEY) { throw new Error('API Key not found.'); }
@@ -21,15 +20,8 @@ export default async function QuizzesPage() {
       <p>Start by selecting one of the quizzes below.</p>
       <div style={{ marginTop: '20px' }}>
         {Array.isArray(quizzes) && quizzes.map((quiz: any) => (
-          // Her bir quiz'i bir Link bileşeni ile sarmalıyoruz
-          <Link key={quiz.id} href={`/quizzes/${quiz.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
-            <div style={{ marginBottom: '15px', border: '1px solid #eee', padding: '20px', borderRadius: '8px', cursor: 'pointer', transition: 'background-color 0.2s' }} 
-                 onMouseOver={e => e.currentTarget.style.backgroundColor = '#f9f9f9'}
-                 onMouseOut={e => e.currentTarget.style.backgroundColor = 'transparent'}>
-              <h2>{quiz.title}</h2>
-              {quiz.description && <div dangerouslySetInnerHTML={{ __html: quiz.description }} />}
-            </div>
-          </Link>
+          // Her bir quiz için yeni interaktif bileşenimizi kullanıyoruz
+          <QuizListItem key={quiz.id} quiz={quiz} />
         ))}
       </div>
     </main>
