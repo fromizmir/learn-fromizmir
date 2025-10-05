@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from 'react';
 import QuizListItem from '@/components/QuizListItem';
-import styles from '@/app/quizzes/QuizzesPage.module.css'; // Yeni stil dosyamız
+import styles from '@/app/quizzes/QuizzesPage.module.css';
 
 export default function QuizPageClient({ quizzes }: { quizzes: any[] }) {
   const [searchTerm, setSearchTerm] = useState('');
@@ -39,22 +39,23 @@ export default function QuizPageClient({ quizzes }: { quizzes: any[] }) {
 
   return (
     <div className={styles.pageContainer}>
-      {/* SOL SÜTUN (SIDEBAR) */}
       <aside className={styles.sidebar}>
         <h2 className={styles.categoryTitle}>Categories</h2>
-        {categories.map(category => (
-          <button
-            key={category}
-            onClick={() => setSelectedCategory(category)}
-            // Seçili butona farklı bir stil uygulamak için
-            className={`${styles.categoryButton} ${selectedCategory === category ? styles.activeCategory : ''}`}
-          >
-            {category}
-          </button>
-        ))}
+        {/* --- DEĞİŞİKLİK BURADA BAŞLIYOR --- */}
+        <div className={styles.categoryList}>
+          {categories.map(category => (
+            <button
+              key={category}
+              onClick={() => setSelectedCategory(category)}
+              className={`${styles.categoryButton} ${selectedCategory === category ? styles.activeCategory : ''}`}
+            >
+              {category}
+            </button>
+          ))}
+        </div>
+        {/* --- DEĞİŞİKLİK BURADA BİTİYOR --- */}
       </aside>
 
-      {/* SAĞ SÜTUN (ANA İÇERİK) */}
       <div className={styles.mainContent}>
         <input
           type="text"

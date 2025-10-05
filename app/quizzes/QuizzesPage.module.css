@@ -49,3 +49,11 @@
 .mainContent {
     flex-grow: 1;
 }
+/* Bu yeni kuralı dosyanın sonuna ekleyin */
+.categoryList {
+  /* Menünün maksimum yüksekliği. Bu değeri artırıp azaltabilirsiniz. */
+  max-height: 500px; 
+  
+  /* Eğer içerik bu yüksekliğe sığmazsa, dikey bir kaydırma çubuğu göster. */
+  overflow-y: auto; 
+}
