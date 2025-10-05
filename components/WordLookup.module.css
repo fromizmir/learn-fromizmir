@@ -1,0 +1,40 @@
+.container {
+  position: relative;
+  display: inline-block;
+}
+
+.word {
+  color: #007bff;
+  cursor: pointer;
+  text-decoration: underline;
+  text-decoration-style: dotted;
+}
+
+.word:hover {
+  color: #0056b3;
+}
+
+.definitionBox {
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  margin-bottom: 10px;
+  width: 300px;
+  padding: 15px;
+  border-radius: 8px;
+  background-color: #ffffff;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  border: 1px solid #ddd;
+  font-size: 0.9rem;
+  color: #333;
+  z-index: 10;
+  text-align: left;
+  text-decoration: none;
+}
+
+.loading, .error {
+  color: #888;
+  font-style: italic;
+  margin-left: 5px;
+}

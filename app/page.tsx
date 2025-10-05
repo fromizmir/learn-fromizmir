@@ -1,17 +1,13 @@
+import WordLookup from '@/components/WordLookup';
+
 export default function Home() {
-  const toeflQuestions = [
-    "What is the correct form of the verb in 'She ___ to school yesterday'?",
-    "Choose the correct article: ___ apple a day keeps the doctor away.",
-  ];
   return (
-    <div style={{ padding: "20px" }}>
-      <h1>TOEFL Practice</h1>
-      <ul>
-        {toeflQuestions.map((q, i) => (
-          <li key={i}>{q}</li>
-        ))}
-      </ul>
-    </div>
+    <main style={{ padding: '40px', fontSize: '1.2rem', lineHeight: '1.6' }}>
+      <h1>Interactive Content Test</h1>
+      <p>
+        An <WordLookup word="eloquent" /> speaker can captivate an audience.
+        Try clicking on other words too, like <WordLookup word="captivate" /> or <WordLookup word="audience" />.
+      </p>
+    </main>
   );
 }
-// Bu, yeni bir dağıtımı tetiklemek için eklenmiş bir test yorumudur.
