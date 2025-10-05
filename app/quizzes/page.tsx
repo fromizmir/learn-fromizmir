@@ -1,4 +1,4 @@
-import QuizListItem from '@/components/QuizListItem'; // Yeni bileşenimizi import ediyoruz
+import QuizList from '@/components/QuizList'; // Yeni bileşenimizi import ediyoruz
 
 async function getQuizzes() {
   const API_ENDPOINT = 'https://fromizmir.com/wp-json/lolonolo-quiz/v16/quizzes';
@@ -14,16 +14,14 @@ async function getQuizzes() {
 
 export default async function QuizzesPage() {
   const quizzes = await getQuizzes();
+
   return (
     <main style={{ padding: '40px', maxWidth: '800px', margin: '0 auto' }}>
       <h1>All Quizzes</h1>
-      <p>Start by selecting one of the quizzes below.</p>
-      <div style={{ marginTop: '20px' }}>
-        {Array.isArray(quizzes) && quizzes.map((quiz: any) => (
-          // Her bir quiz için yeni interaktif bileşenimizi kullanıyoruz
-          <QuizListItem key={quiz.id} quiz={quiz} />
-        ))}
-      </div>
+      <p>Start by selecting one of the quizzes below or use the search.</p>
+      
+      {/* Veriyi gösterme işini QuizList bileşenine devrediyoruz */}
+      <QuizList quizzes={quizzes} />
     </main>
   );
 }
