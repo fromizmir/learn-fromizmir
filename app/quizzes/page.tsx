@@ -1,67 +1,46 @@
-import QuizPageClient from '@/components/QuizPageClient';
+import QuizListItem from '@/components/QuizListItem';
+import SearchBar from '@/components/SearchBar'; // Birazdan oluşturacağız
 
-// --- BİRİNCİ VERİ KAYNAĞI ---
-async function getMyQuizzes() {
+async function getQuizzes() {
+  // Bu fonksiyon aynı, veri çekmek için...
   const API_ENDPOINT = 'https://fromizmir.com/wp-json/lolonolo-quiz/v16/quizzes';
   const API_KEY = process.env.LOLONOLO_API_KEY;
-  if (!API_KEY) { throw new Error('LOLONOLO_API_KEY not found.'); }
-  
+  if (!API_KEY) { throw new Error('API Key not found.'); }
   const res = await fetch(API_ENDPOINT, {
     headers: { 'Authorization': `Bearer ${API_KEY}` },
     cache: 'no-store',
   });
-  if (!res.ok) { return []; } // Hata olursa boş bir dizi döndür
-  
-  const data = await res.json();
-  // Kendi quizlerimizi standart bir formata dönüştürelim
-  return data.map((quiz: any) => ({
-    id: quiz.id,
-    title: quiz.title,
-    description: quiz.description,
-    source: 'fromizmir' // Kaynağını belirtelim
-  }));
+  if (!res.ok) { throw new Error('Failed to fetch quizzes.'); }
+  return res.json();
 }
 
-// --- İKİNCİ VERİ KAYNAĞI ---
-async function getTriviaCategories() {
-  // Bu API, mevcut tüm kategorileri ve içlerindeki soru sayılarını verir.
-  const API_ENDPOINT = 'https://the-trivia-api.com/v2/metadata';
-  const API_KEY = process.env.TRIVIA_API_KEY;
+// searchParams ile URL'den gelen kategori ve arama terimini alacağız
+export default async function QuizzesPage({ searchParams }: { searchParams?: { category?: string; search?: string } }) {
+  const allQuizzes = await getQuizzes();
 
-  // Not: Dökümantasyona göre bu endpoint için API key zorunlu olmayabilir,
-  // ama gelecekteki istekler için eklemek iyi bir pratik.
-  const res = await fetch(`${API_ENDPOINT}?apiKey=${API_KEY}`, { cache: 'no-store' });
-  if (!res.ok) { return []; }
+  const currentCategory = searchParams?.category || 'All';
+  const searchTerm = searchParams?.search || '';
 
-  const data = await res.json();
-  
-  // Gelen veriyi bizim standart formatımıza dönüştürelim
-  // "byCategory" objesini bir diziye çeviriyoruz
-  return Object.entries(data.byCategory).map(([categoryName, questionCount]) => ({
-    id: `trivia_${categoryName}`, // Benzersiz bir ID oluşturalım
-    title: `${categoryName.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())} Questions`, // Örn: 'film_and_tv' -> 'Film And Tv Questions'
-    description: `A set of ${questionCount} questions from The Trivia API.`,
-    source: 'trivia', // Kaynağını belirtelim
-    category: categoryName // Daha sonra filtreleme için kategori adını saklayalım
-  }));
-}
+  const filteredQuizzes = Array.isArray(allQuizzes) ? allQuizzes.filter(quiz => {
+    const title = quiz.title || '';
+    const titleMatchesSearch = title.toLowerCase().includes(searchTerm.toLowerCase());
+    
+    if (currentCategory === 'All') return titleMatchesSearch;
 
-
-// --- ANA SAYFA BİLEŞENİ ---
-export default async function QuizzesPage() {
-  // İki API'yi aynı anda, paralel olarak çağıralım
-  const [myQuizzes, triviaQuizzes] = await Promise.all([
-    getMyQuizzes(),
-    getTriviaCategories()
-  ]);
-
-  // İki listeden gelen sonuçları birleştirelim
-  const allQuizzes = [...myQuizzes, ...triviaQuizzes];
+    const exerciseIndex = title.toLowerCase().indexOf(' exercise');
+    const categoryOfQuiz = exerciseIndex > 0 ? title.substring(0, exerciseIndex).trim() : '';
+    
+    return categoryOfQuiz === currentCategory && titleMatchesSearch;
+  }) : [];
 
   return (
-    <main style={{ padding: '0' }}>
-      {/* Birleştirilmiş listeyi interaktif bileşenimize gönderiyoruz */}
-      <QuizPageClient quizzes={allQuizzes} />
-    </main>
+    <div>
+      <SearchBar />
+      <div style={{ marginTop: '20px' }}>
+        {filteredQuizzes.map((quiz: any) => (
+          <QuizListItem key={quiz.id} quiz={quiz} />
+        ))}
+      </div>
+    </div>
   );
 }
