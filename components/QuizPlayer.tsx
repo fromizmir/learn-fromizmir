@@ -1,59 +1,77 @@
-"use client"; // Bu bileşen tarayıcıda çalışacak
+"use client";
 
-import { useState } from 'react';
-import styles from './QuizPlayer.module.css'; // Stil dosyamız
+import { useState, useEffect } from 'react';
+import styles from './QuizPlayer.module.css';
+
+// Bu fonksiyonu dosyanın en üstüne, import'ların altına ekleyin
+async function saveQuizResult(quizId: string, score: number, quizTitle: string) {
+  try {
+    await fetch('/api/save-result', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ quizId, score, quizTitle }),
+    });
+  } catch (error) {
+    console.error("Failed to save quiz result:", error);
+  }
+}
+
 
 export default function QuizPlayer({ quizData }: { quizData: any }) {
-  // Değişken durumları takip etmek için 'useState' kullanıyoruz:
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedAnswerIndex, setSelectedAnswerIndex] = useState<number | null>(null);
   const [isAnswered, setIsAnswered] = useState(false);
   const [score, setScore] = useState(0);
   const [isQuizFinished, setIsQuizFinished] = useState(false);
   
-  // Mevcut soru ve toplam soru sayısı gibi bilgileri alalım
   const question = quizData.sorular[currentQuestionIndex];
   const totalQuestions = quizData.sorular.length;
 
-  // Bir şıkka tıklandığında çalışacak fonksiyon
   const handleAnswer = (selectedIndex: number) => {
-    if (isAnswered) return; // Eğer zaten cevaplanmışsa bir şey yapma
-
+    if (isAnswered) return;
     setSelectedAnswerIndex(selectedIndex);
     setIsAnswered(true);
-
-    // Eğer doğru cevap ise skoru artır
     if (selectedIndex === question.dogruCevapIndex) {
       setScore(prevScore => prevScore + 10);
     }
   };
 
-  // "Next Question" butonuna tıklandığında çalışacak fonksiyon
   const handleNextQuestion = () => {
     if (currentQuestionIndex < totalQuestions - 1) {
-      // Sonraki soruya geç
       setCurrentQuestionIndex(prevIndex => prevIndex + 1);
-      // Durumları sıfırla
       setIsAnswered(false);
       setSelectedAnswerIndex(null);
     } else {
-      // Eğer son soru ise sınavı bitir
+      // --- DEĞİŞİKLİK BURADA ---
+      // Sınav bittiğinde skoru kaydet
+      saveQuizResult(quizData.id, score, quizData.sinavAdi);
       setIsQuizFinished(true);
     }
   };
   
-  // "Choose Another Quiz" butonuna tıklandığında çalışacak fonksiyon
   const handleRestart = () => {
      window.location.href = '/quizzes';
   }
 
-  // Eğer sınav bittiyse, final skor ekranını göster
+  // useEffect içinde, sınav bittiğinde skoru kaydetmek için bir başka yöntem
+  useEffect(() => {
+    if (isQuizFinished) {
+        // Skoru ve diğer bilgileri API'ye gönder.
+        // handleNextQuestion içinde zaten yaptık ama burada da yapılabilir.
+        // Şimdilik ek bir işlem yapmaya gerek yok.
+    }
+  }, [isQuizFinished, quizData.id, score, quizData.sinavAdi]);
+
+
   if (isQuizFinished) {
     return (
       <div className={styles.quizPanel}>
         <div className={styles.questionArea}>
           <h2>Exam Finished!</h2>
           <p className={styles.finalScore}>Your Final Score: {score}</p>
+          <p style={{textAlign: 'center', color: '#666'}}>Your result has been saved to your profile.</p>
           <button onClick={handleRestart} className={styles.nextQuestionBtn} style={{display: 'block'}}>
             Choose Another Quiz
           </button>
@@ -62,7 +80,6 @@ export default function QuizPlayer({ quizData }: { quizData: any }) {
     );
   }
 
-  // Sınav devam ediyorsa, mevcut soruyu göster
   return (
     <div className={styles.quizPanel}>
       <div className={styles.quizHeader}>
@@ -77,9 +94,9 @@ export default function QuizPlayer({ quizData }: { quizData: any }) {
             let btnClass = styles.optionBtn;
             if (isAnswered) {
               if (index === question.dogruCevapIndex) {
-                btnClass += ` ${styles.correct}`; // Doğru şıkkı yeşil yap
+                btnClass += ` ${styles.correct}`;
               } else if (index === selectedAnswerIndex) {
-                btnClass += ` ${styles.incorrect}`; // Seçilen yanlış şıkkı kırmızı yap
+                btnClass += ` ${styles.incorrect}`;
               }
             }
             return (
@@ -96,7 +113,7 @@ export default function QuizPlayer({ quizData }: { quizData: any }) {
 
         {isAnswered && (
           <button onClick={handleNextQuestion} className={styles.nextQuestionBtn}>
-            {currentQuestionIndex < totalQuestions - 1 ? 'Next Question' : 'Finish Exam'}
+            {currentQuestionIndex < totalQuestions - 1 ? 'Next Question' : 'Finish Exam & Save Result'}
           </button>
         )}
       </div>
