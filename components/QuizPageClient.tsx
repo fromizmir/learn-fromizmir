@@ -1,13 +1,15 @@
 "use client";
 
 import { useState, useMemo } from 'react';
-import QuizListItem from '@/components/QuizListItem';
-import styles from '@/app/quizzes/QuizzesPage.module.css';
+import Link from 'next/link';
+// CSS modülünü app klasöründen import ediyoruz
+import styles from '@/app/quizzes/QuizzesPage.module.css'; 
 
 export default function QuizPageClient({ quizzes }: { quizzes: any[] }) {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
 
+  // Quiz başlıklarından benzersiz kategori listesi oluşturma
   const categories = useMemo(() => {
     const categorySet = new Set<string>();
     quizzes.forEach(quiz => {
@@ -20,6 +22,7 @@ export default function QuizPageClient({ quizzes }: { quizzes: any[] }) {
     return ['All', ...Array.from(categorySet).sort()];
   }, [quizzes]);
 
+  // Hem kategoriye hem de arama terimine göre filtreleme
   const filteredQuizzes = quizzes.filter(quiz => {
     const title = quiz.title || '';
     const titleMatchesSearch = title.toLowerCase().includes(searchTerm.toLowerCase());
@@ -39,9 +42,9 @@ export default function QuizPageClient({ quizzes }: { quizzes: any[] }) {
 
   return (
     <div className={styles.pageContainer}>
+      {/* SOL SÜTUN (SIDEBAR) */}
       <aside className={styles.sidebar}>
         <h2 className={styles.categoryTitle}>Categories</h2>
-        {/* --- DEĞİŞİKLİK BURADA BAŞLIYOR --- */}
         <div className={styles.categoryList}>
           {categories.map(category => (
             <button
@@ -53,9 +56,9 @@ export default function QuizPageClient({ quizzes }: { quizzes: any[] }) {
             </button>
           ))}
         </div>
-        {/* --- DEĞİŞİKLİK BURADA BİTİYOR --- */}
       </aside>
 
+      {/* SAĞ SÜTUN (ANA İÇERİK) */}
       <div className={styles.mainContent}>
         <input
           type="text"
@@ -68,8 +71,25 @@ export default function QuizPageClient({ quizzes }: { quizzes: any[] }) {
           }}
         />
         <div>
+          {/* QuizListItem'ı burada kullanmaya devam ediyoruz */}
           {filteredQuizzes.map((quiz: any) => (
-            <QuizListItem key={quiz.id} quiz={quiz} />
+             <Link key={quiz.id} href={`/quizzes/${quiz.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+                <div 
+                    style={{ 
+                    marginBottom: '15px', 
+                    border: '1px solid #eee', 
+                    padding: '20px', 
+                    borderRadius: '8px', 
+                    cursor: 'pointer', 
+                    transition: 'background-color 0.2s' 
+                    }}
+                    onMouseOver={e => e.currentTarget.style.backgroundColor = '#f9f9f9'}
+                    onMouseOut={e => e.currentTarget.style.backgroundColor = 'transparent'}
+                >
+                    <h2>{quiz.title}</h2>
+                    {quiz.description && <div dangerouslySetInnerHTML={{ __html: quiz.description }} />}
+                </div>
+            </Link>
           ))}
         </div>
       </div>
