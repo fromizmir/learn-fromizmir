@@ -72,7 +72,7 @@ export default function RootLayout({
             {`
               if (typeof ezstandalone !== 'undefined') {
                 ezstandalone.cmd.push(function() {
-                  ezstandalone.define(648, 647); // Reklam ID'lerini buraya tanımlıyoruz
+                  ezstandalone.define(651,652,653); // Reklam ID'lerini buraya tanımlıyoruz
                 });
                 ezstandalone.cmd.push(function() {
                   ezstandalone.enable();

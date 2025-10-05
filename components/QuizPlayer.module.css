@@ -108,3 +108,11 @@
     text-align: center;
     margin: 20px 0;
 }
+.adScreen {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 40px;
+  min-height: 50vh;
+}
