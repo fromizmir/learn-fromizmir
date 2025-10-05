@@ -1,43 +1,53 @@
 "use client"; // Bu bileşen tarayıcıda çalışacak
 
-import { useState, useEffect } from 'react';
-import styles from './QuizPlayer.module.css'; // Birazdan oluşturacağımız stil dosyası
+import { useState } from 'react';
+import styles from './QuizPlayer.module.css'; // Stil dosyamız
 
 export default function QuizPlayer({ quizData }: { quizData: any }) {
+  // Değişken durumları takip etmek için 'useState' kullanıyoruz:
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedAnswerIndex, setSelectedAnswerIndex] = useState<number | null>(null);
   const [isAnswered, setIsAnswered] = useState(false);
   const [score, setScore] = useState(0);
   const [isQuizFinished, setIsQuizFinished] = useState(false);
   
+  // Mevcut soru ve toplam soru sayısı gibi bilgileri alalım
   const question = quizData.sorular[currentQuestionIndex];
   const totalQuestions = quizData.sorular.length;
 
+  // Bir şıkka tıklandığında çalışacak fonksiyon
   const handleAnswer = (selectedIndex: number) => {
-    if (isAnswered) return;
+    if (isAnswered) return; // Eğer zaten cevaplanmışsa bir şey yapma
 
     setSelectedAnswerIndex(selectedIndex);
     setIsAnswered(true);
 
+    // Eğer doğru cevap ise skoru artır
     if (selectedIndex === question.dogruCevapIndex) {
       setScore(prevScore => prevScore + 10);
     }
   };
 
+  // "Next Question" butonuna tıklandığında çalışacak fonksiyon
   const handleNextQuestion = () => {
     if (currentQuestionIndex < totalQuestions - 1) {
+      // Sonraki soruya geç
       setCurrentQuestionIndex(prevIndex => prevIndex + 1);
+      // Durumları sıfırla
       setIsAnswered(false);
       setSelectedAnswerIndex(null);
     } else {
+      // Eğer son soru ise sınavı bitir
       setIsQuizFinished(true);
     }
   };
   
+  // "Choose Another Quiz" butonuna tıklandığında çalışacak fonksiyon
   const handleRestart = () => {
      window.location.href = '/quizzes';
   }
 
+  // Eğer sınav bittiyse, final skor ekranını göster
   if (isQuizFinished) {
     return (
       <div className={styles.quizPanel}>
@@ -52,6 +62,7 @@ export default function QuizPlayer({ quizData }: { quizData: any }) {
     );
   }
 
+  // Sınav devam ediyorsa, mevcut soruyu göster
   return (
     <div className={styles.quizPanel}>
       <div className={styles.quizHeader}>
@@ -66,9 +77,9 @@ export default function QuizPlayer({ quizData }: { quizData: any }) {
             let btnClass = styles.optionBtn;
             if (isAnswered) {
               if (index === question.dogruCevapIndex) {
-                btnClass += ` ${styles.correct}`;
+                btnClass += ` ${styles.correct}`; // Doğru şıkkı yeşil yap
               } else if (index === selectedAnswerIndex) {
-                btnClass += ` ${styles.incorrect}`;
+                btnClass += ` ${styles.incorrect}`; // Seçilen yanlış şıkkı kırmızı yap
               }
             }
             return (
