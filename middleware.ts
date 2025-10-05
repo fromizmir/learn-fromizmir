@@ -1,8 +1,8 @@
 import { authMiddleware } from "@clerk/nextjs/server";
 
 export default authMiddleware({
-  // publicRoutes listesine "/quizzes" eklendi
-  publicRoutes: ["/", "/sign-in", "/sign-up", "/quizzes"],
+  // Bu regex, tüm rotaların herkese açık olmasını sağlar.
+  publicRoutes: ["/(.*)"],
 });
 
 export const config = {

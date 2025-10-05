@@ -1,30 +1,7 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import styles from './QuizPlayer.module.css';
-
-// Bu yeni fonksiyon, skor kaydetme API'mizi çağıracak
-async function saveQuizResult(quizId: string, score: number, quizTitle: string) {
-  try {
-    const response = await fetch('/api/save-result', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ quizId, score, quizTitle }),
-    });
-
-    if (!response.ok) {
-      throw new Error('Failed to save result');
-    }
-
-    console.log("Result saved successfully!");
-
-  } catch (error) {
-    console.error("Error saving quiz result:", error);
-  }
-}
-
 
 export default function QuizPlayer({ quizData }: { quizData: any }) {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
@@ -32,7 +9,7 @@ export default function QuizPlayer({ quizData }: { quizData: any }) {
   const [isAnswered, setIsAnswered] = useState(false);
   const [score, setScore] = useState(0);
   const [isQuizFinished, setIsQuizFinished] = useState(false);
-  
+
   const question = quizData.sorular[currentQuestionIndex];
   const totalQuestions = quizData.sorular.length;
 
@@ -41,9 +18,7 @@ export default function QuizPlayer({ quizData }: { quizData: any }) {
     setSelectedAnswerIndex(selectedIndex);
     setIsAnswered(true);
     if (selectedIndex === question.dogruCevapIndex) {
-      // Skoru doğru cevaba göre anlık olarak güncelleyelim
-      const newScore = score + 10;
-      setScore(newScore);
+      setScore(prevScore => prevScore + 10);
     }
   };
 
@@ -53,27 +28,20 @@ export default function QuizPlayer({ quizData }: { quizData: any }) {
       setIsAnswered(false);
       setSelectedAnswerIndex(null);
     } else {
-      // --- ANA DEĞİŞİKLİK BURADA ---
-      // Sınav bittiğinde, skoru veritabanına kaydetmek için API'yi çağır
-      // Not: Yukarıda 'handleAnswer'da skoru zaten güncelledik.
-      // Ama state güncellemeleri anlık olmayabildiği için, son skoru hesaplayıp gönderiyoruz.
-      const finalScore = selectedAnswerIndex === question.dogruCevapIndex ? score : score;
-      saveQuizResult(quizData.id, finalScore, quizData.sinavAdi);
       setIsQuizFinished(true);
     }
   };
-  
+
   const handleRestart = () => {
      window.location.href = '/quizzes';
   }
-  
+
   if (isQuizFinished) {
     return (
       <div className={styles.quizPanel}>
         <div className={styles.questionArea}>
           <h2>Exam Finished!</h2>
           <p className={styles.finalScore}>Your Final Score: {score}</p>
-          <p style={{textAlign: 'center', color: '#666'}}>Your result has been saved.</p>
           <button onClick={handleRestart} className={styles.nextQuestionBtn} style={{display: 'block'}}>
             Choose Another Quiz
           </button>
@@ -82,8 +50,7 @@ export default function QuizPlayer({ quizData }: { quizData: any }) {
     );
   }
 
-  // --- JSX (Görünüm) kısmı ---
-  // (Bu kısım büyük ölçüde aynı, sadece buton metni değişti)
+  // JSX kısmı aynı kalabilir...
   return (
     <div className={styles.quizPanel}>
       <div className={styles.quizHeader}>
@@ -110,14 +77,12 @@ export default function QuizPlayer({ quizData }: { quizData: any }) {
             );
           })}
         </div>
-
         {isAnswered && question.aciklama && (
           <div className={styles.explanationArea} dangerouslySetInnerHTML={{ __html: question.aciklama }} />
         )}
-
         {isAnswered && (
           <button onClick={handleNextQuestion} className={styles.nextQuestionBtn}>
-            {currentQuestionIndex < totalQuestions - 1 ? 'Next Question' : 'Finish Exam & Save Result'}
+            {currentQuestionIndex < totalQuestions - 1 ? 'Next Question' : 'Finish Exam'}
           </button>
         )}
       </div>
