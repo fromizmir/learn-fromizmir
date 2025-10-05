@@ -1,6 +1,5 @@
-
-export const dynamic = 'force-dynamic';
 import Link from 'next/link';
+import WelcomeButton from '@/components/WelcomeButton'; // Yeni butonumuzu import ediyoruz
 
 export default function HomePage() {
   return (
@@ -19,21 +18,9 @@ export default function HomePage() {
       <p style={{ fontSize: '1.2rem', color: '#555', maxWidth: '600px', marginBottom: '40px' }}>
         Your free, interactive platform for TOEFL and English language practice. Enhance your skills with a rich library of quizzes from various sources.
       </p>
-      <Link href="/quizzes" style={{
-        padding: '15px 30px',
-        backgroundColor: '#007bff',
-        color: 'white',
-        borderRadius: '8px',
-        textDecoration: 'none',
-        fontSize: '1.1rem',
-        fontWeight: 'bold',
-        transition: 'background-color 0.2s'
-      }}
-       onMouseOver={e => e.currentTarget.style.backgroundColor = '#0056b3'}
-       onMouseOut={e => e.currentTarget.style.backgroundColor = '#007bff'}
-      >
-        Start Practicing Now
-      </Link>
+      
+      {/* Artık interaktif link yerine, kendi bileşenimizi kullanıyoruz */}
+      <WelcomeButton />
     </main>
   );
 }
