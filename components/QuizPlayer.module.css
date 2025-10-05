@@ -5,11 +5,14 @@
     background-color: #ffffff;
     border-radius: 16px;
     box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+    /* YENİ EKLENEN KISIM: Panele sabit bir yükseklik veriyoruz */
+    height: calc(100vh - 120px); /* Header'ı hesaba katarak ekranın çoğunu kaplasın */
     display: flex;
     flex-direction: column;
 }
 
 .quizHeader {
+    /* Bu kısım aynı kalıyor */
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -17,102 +20,26 @@
     background-color: #f8f9fa;
     border-bottom: 1px solid #ddd;
     border-radius: 16px 16px 0 0;
+    flex-shrink: 0; /* Küçülmesini engeller */
 }
 
-.quizTitle {
-    font-size: 1.2rem;
-    font-weight: 600;
-}
-
+/* YENİ EKLENEN KISIM: Soru alanını kaydırılabilir yapıyoruz */
 .questionArea {
     padding: 30px;
+    flex-grow: 1; /* Geri kalan tüm alanı kaplamasını sağlar */
+    overflow-y: auto; /* İçerik sığmazsa, bu alan kendi içinde kayar */
 }
 
-.questionCounter {
-    text-align: center;
-    margin-bottom: 20px;
-    color: #888;
-    font-size: 0.9rem;
-}
-
-.questionText {
-    font-size: clamp(1.2rem, 2.2vw, 1.6rem);
-    margin-bottom: 30px;
-    text-align: center;
-    line-height: 1.4;
-}
-
-.optionsGrid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 15px;
-}
-
-.optionBtn {
-    width: 100%;
-    padding: 15px;
-    font-size: 1rem;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    background-color: #ffffff;
-    cursor: pointer;
-    transition: background-color 0.2s, transform 0.1s;
-    text-align: left;
-}
-
-.optionBtn:hover:not(:disabled) {
-    background-color: #f5f5f5;
-}
-
-.optionBtn.correct {
-    background-color: #28a745;
-    color: white;
-    border-color: #28a745;
-}
-
-.optionBtn.incorrect {
-    background-color: #dc3545;
-    color: white;
-    border-color: #dc3545;
-}
-
-.optionBtn:disabled {
-    cursor: not-allowed;
-    opacity: 0.8;
-}
-
-.explanationArea {
-    margin-top: 20px;
-    padding: 15px;
-    background-color: #f8f9fa;
-    border-radius: 8px;
-    border: 1px solid #ddd;
-}
-
-.nextQuestionBtn {
-    display: block;
-    margin: 30px auto 0;
-    padding: 12px 30px;
-    font-size: 1.1rem;
-    font-weight: bold;
-    color: white;
-    background-color: #007bff;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-}
-
-.finalScore {
-    font-size: 1.5rem;
-    font-weight: bold;
-    text-align: center;
-    margin: 20px 0;
-}
-.adScreen {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  padding: 40px;
-  min-height: 50vh;
-}
+.quizTitle { font-size: 1.2rem; font-weight: 600; }
+.questionCounter { text-align: center; margin-bottom: 20px; color: #888; font-size: 0.9rem; }
+.questionText { font-size: clamp(1.2rem, 2.2vw, 1.6rem); margin-bottom: 30px; text-align: center; line-height: 1.4; }
+.optionsGrid { display: grid; grid-template-columns: 1fr; gap: 15px; }
+.optionBtn { width: 100%; padding: 15px; font-size: 1rem; border: 1px solid #ddd; border-radius: 8px; background-color: #ffffff; cursor: pointer; transition: background-color 0.2s, transform 0.1s; text-align: left; }
+.optionBtn:hover:not(:disabled) { background-color: #f5f5f5; }
+.optionBtn.correct { background-color: #28a745; color: white; border-color: #28a745; }
+.optionBtn.incorrect { background-color: #dc3545; color: white; border-color: #dc3545; }
+.optionBtn:disabled { cursor: not-allowed; opacity: 0.8; }
+.explanationArea { margin-top: 20px; padding: 15px; background-color: #f8f9fa; border-radius: 8px; border: 1px solid #ddd; }
+.nextQuestionBtn { display: block; margin: 30px auto 0; padding: 12px 30px; font-size: 1.1rem; font-weight: bold; color: white; background-color: #007bff; border: none; border-radius: 8px; cursor: pointer; }
+.finalScore { font-size: 1.5rem; font-weight: bold; text-align: center; margin: 20px 0; }
+.adScreen { display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 40px; min-height: 50vh; }

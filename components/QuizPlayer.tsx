@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from 'react'; // useRef'i import ediyoruz
+import { useState, useEffect, useRef } from 'react';
 import styles from './QuizPlayer.module.css';
 
 async function saveQuizResult(quizId: string, score: number, quizTitle: string) {
@@ -23,12 +23,9 @@ export default function QuizPlayer({ quizData }: { quizData: any }) {
   const [isAnswered, setIsAnswered] = useState(false);
   const [score, setScore] = useState(0);
   const [isQuizFinished, setIsQuizFinished] = useState(false);
-  
-  // --- YENİ EKLENEN STATE'LER ---
   const [showAdScreen, setShowAdScreen] = useState(false);
   const [adCountdown, setAdCountdown] = useState(5);
   
-  // Otomatik kaydırma için referanslar
   const explanationRef = useRef<HTMLDivElement>(null);
   const adScreenRef = useRef<HTMLDivElement>(null);
 
@@ -37,55 +34,46 @@ export default function QuizPlayer({ quizData }: { quizData: any }) {
 
   const handleAnswer = (selectedIndex: number) => {
     if (isAnswered) return;
-
     setSelectedAnswerIndex(selectedIndex);
     setIsAnswered(true);
-
     if (selectedIndex === question.dogruCevapIndex) {
       setScore(prevScore => prevScore + 10);
     }
-    
-    // --- YENİ EKLENEN KISIM: OTOMATİK KAYDIRMA ---
-    // Cevap verildikten kısa bir süre sonra açıklama/sonraki buton alanına kaydır
     setTimeout(() => {
       explanationRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }, 100);
   };
 
   const handleNextQuestion = () => {
-    // --- YENİ EKLENEN KISIM: REKLAM KONTROLÜ ---
     const nextIndex = currentQuestionIndex + 1;
-    // Eğer 5. 10. 15. vb. soruya geçiyorsak ve bu son soru değilse reklam göster
     if (nextIndex % 5 === 0 && nextIndex < totalQuestions) {
       setShowAdScreen(true);
-      return; // Normal soruya geçme, reklam ekranında kal
+      return; 
     }
-
     if (nextIndex < totalQuestions) {
       setCurrentQuestionIndex(nextIndex);
       setIsAnswered(false);
       setSelectedAnswerIndex(null);
     } else {
-      const finalScore = selectedAnswerIndex === question.dogruCevapIndex ? score : score;
+      const finalScore = score;
       saveQuizResult(quizData.id, finalScore, quizData.sinavAdi);
       setIsQuizFinished(true);
     }
   };
   
   const proceedAfterAd = () => {
-    setShowAdScreen(false); // Reklam ekranını kapat
+    setShowAdScreen(false);
     const nextIndex = currentQuestionIndex + 1;
     if (nextIndex < totalQuestions) {
-      setCurrentQuestionIndex(nextIndex); // Bir sonraki soruya geç
+      setCurrentQuestionIndex(nextIndex);
       setIsAnswered(false);
       setSelectedAnswerIndex(null);
     }
   }
 
-  // Reklam ekranı gösterildiğinde 5 saniyelik geri sayımı başlatan useEffect
   useEffect(() => {
     if (showAdScreen) {
-      setAdCountdown(5); // Geri sayımı sıfırla
+      setAdCountdown(5);
       const timer = setInterval(() => {
         setAdCountdown(prev => {
           if (prev <= 1) {
@@ -95,12 +83,9 @@ export default function QuizPlayer({ quizData }: { quizData: any }) {
           return prev - 1;
         });
       }, 1000);
-      
-      // Reklam ekranına otomatik kaydır
       setTimeout(() => {
         adScreenRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
       }, 100);
-
       return () => clearInterval(timer);
     }
   }, [showAdScreen]);
@@ -109,16 +94,19 @@ export default function QuizPlayer({ quizData }: { quizData: any }) {
      window.location.href = '/quizzes';
   }
 
-  // --- YENİ EKLENEN KISIM: REKLAM EKRANI ---
   if (showAdScreen) {
     return (
       <div className={styles.quizPanel} ref={adScreenRef}>
         <div className={styles.adScreen}>
           <h3>Advertisement</h3>
-          {/* EZOIC REKLAM ALANI */}
-          {/* ÖNEMLİ: Bu ID'yi Ezoic panelinizde oluşturduğunuz yeni reklam birimi ID'si ile değiştirin */}
+          {/* --- DEĞİŞİKLİK BURADA --- */}
+          {/* Yer tutucu metin yerine gerçek Ezoic div'i eklendi */}
           <div id="ezoic-pub-ad-placeholder-651" style={{minHeight: '250px', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px dashed #ccc'}}>
-             Ad will be displayed here.
+            <script>
+    ezstandalone.cmd.push(function () {
+        ezstandalone.showAds(651);
+    });
+</script>
           </div>
           
           <button onClick={proceedAfterAd} className={styles.nextQuestionBtn} disabled={adCountdown > 0}>
@@ -130,7 +118,6 @@ export default function QuizPlayer({ quizData }: { quizData: any }) {
   }
 
   if (isQuizFinished) {
-    // Final skoru ekranı aynı kalıyor...
     return (
       <div className={styles.quizPanel}>
         <div className={styles.questionArea}>
@@ -153,7 +140,7 @@ export default function QuizPlayer({ quizData }: { quizData: any }) {
       </div>
       <div className={styles.questionArea}>
         <div className={styles.questionCounter}>Question {currentQuestionIndex + 1} / {totalQuestions}</div>
-        <h3 className={styles.questionText} dangerouslySetInnerHTML={{ __html: question.soruMetni }} />
+        <h3 className={styles.questionText} dangerouslySetInnerHTML={{ __html: question.sorular[currentQuestionIndex].soruMetni }} />
         <div className={styles.optionsGrid}>
           {question.secenekler.map((option: string, index: number) => {
             let btnClass = styles.optionBtn;
@@ -171,13 +158,10 @@ export default function QuizPlayer({ quizData }: { quizData: any }) {
             );
           })}
         </div>
-        
-        {/* 'ref' özelliğini buraya ekliyoruz */}
         <div ref={explanationRef}>
           {isAnswered && question.aciklama && (
             <div className={styles.explanationArea} dangerouslySetInnerHTML={{ __html: question.aciklama }} />
           )}
-
           {isAnswered && (
             <button onClick={handleNextQuestion} className={styles.nextQuestionBtn}>
               {currentQuestionIndex < totalQuestions - 1 ? 'Next Question' : 'Finish Exam & Save Result'}
