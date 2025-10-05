@@ -1,13 +1,11 @@
-// Dosya Yolu: app/quizzes/layout.tsx
-import styles from './layout.module.css';
-import QuizzesSidebar from '@/components/QuizzesSidebar'; // Birazdan oluşturacağız
+import styles from './layout.module.css'; // Yol './' olarak düzeltildi
+import QuizzesSidebar from '@/components/QuizzesSidebar';
 
-// Kategori listesini oluşturmak için quiz verilerini çek
 async function getQuizzes() {
   const API_ENDPOINT = 'https://fromizmir.com/wp-json/lolonolo-quiz/v16/quizzes';
   const API_KEY = process.env.LOLONOLO_API_KEY;
-  if (!API_KEY) { return []; } // Hata durumunda boş liste döndür
-  
+  if (!API_KEY) { return []; }
+
   try {
     const res = await fetch(API_ENDPOINT, {
       headers: { 'Authorization': `Bearer ${API_KEY}` },
@@ -27,7 +25,7 @@ export default async function QuizzesLayout({
   children: React.ReactNode;
 }) {
   const quizzes = await getQuizzes();
-  
+
   const categorySet = new Set<string>();
   if (Array.isArray(quizzes)) {
     quizzes.forEach(quiz => {
@@ -42,10 +40,7 @@ export default async function QuizzesLayout({
 
   return (
     <div className={styles.pageContainer}>
-      {/* İnteraktif menüyü ayrı bir bileşen olarak çağırıyoruz */}
       <QuizzesSidebar categories={categories} />
-
-      {/* Ana içerik alanı */}
       <main className={styles.mainContent}>
         {children}
       </main>

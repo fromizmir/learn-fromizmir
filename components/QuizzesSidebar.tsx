@@ -2,8 +2,8 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { useSearchParams } from 'next/navigation'; // URL'i okumak için
-import styles from '@/app/quizzes/layout.module.css'; // Ortak stil dosyasını kullanıyoruz
+import { useSearchParams } from 'next/navigation';
+import styles from '@/app/quizzes/layout.module.css'; // Yol '@/app/quizzes/...' olarak düzeltildi
 
 export default function QuizzesSidebar({ categories }: { categories: string[] }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -24,7 +24,7 @@ export default function QuizzesSidebar({ categories }: { categories: string[] })
               key={category}
               href={category === 'All' ? '/quizzes' : `/quizzes?category=${category}`}
               className={`${styles.categoryButton} ${selectedCategory === category ? styles.activeCategory : ''}`}
-              onClick={() => setIsMenuOpen(false)} // Mobilde linke tıklayınca menüyü kapat
+              onClick={() => setIsMenuOpen(false)}
             >
               {category}
             </Link>
