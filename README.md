@@ -7,3 +7,4 @@
 - 🌐 Deployed on Vercel, open-source on GitHub.
 
 Fork, contribute, or try it at [learn.fromizmir.com](https://learn.fromizmir.com)!
+
