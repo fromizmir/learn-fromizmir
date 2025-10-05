@@ -1,15 +1,17 @@
 // Dosya Yolu: app/quizzes/layout.tsx
-
 import styles from './layout.module.css';
 import QuizzesSidebar from '@/components/QuizzesSidebar';
 
-// Bu fonksiyon aynı kalıyor...
 async function getQuizzes() {
   const API_ENDPOINT = 'https://fromizmir.com/wp-json/lolonolo-quiz/v16/quizzes';
   const API_KEY = process.env.LOLONOLO_API_KEY;
   if (!API_KEY) { return []; }
+  
   try {
-    const res = await fetch(API_ENDPOINT, { headers: { 'Authorization': `Bearer ${API_KEY}` }, cache: 'no-store' });
+    const res = await fetch(API_ENDPOINT, {
+      headers: { 'Authorization': `Bearer ${API_KEY}` },
+      cache: 'no-store',
+    });
     if (!res.ok) { return []; }
     return res.json();
   } catch (error) {
@@ -24,6 +26,7 @@ export default async function QuizzesLayout({
   children: React.ReactNode;
 }) {
   const quizzes = await getQuizzes();
+  
   const categorySet = new Set<string>();
   if (Array.isArray(quizzes)) {
     quizzes.forEach(quiz => {
@@ -37,26 +40,12 @@ export default async function QuizzesLayout({
   const categories = ['All', ...Array.from(categorySet).sort()];
 
   return (
-    <div className={styles.pageContainerWithAds}> {/* Yeni bir class adı kullanabiliriz */}
-      {/* --- SOL REKLAM ALANI --- */}
-      <div className={styles.adSidebar}>
-        {/* Ezoic - quiz.fromizmir.com_left - sidebar_middle */}
-        <div id="ezoic-pub-ad-placeholder-648"></div>
-      </div>
-      
-      {/* ORTA İÇERİK ALANI */}
-      <div className={styles.contentWithSidebar}>
-        <QuizzesSidebar categories={categories} />
-        <main className={styles.mainContent}>
-          {children}
-        </main>
-      </div>
-
-      {/* --- SAĞ REKLAM ALANI --- */}
-      <div className={styles.adSidebar}>
-        {/* Ezoic - quiz.fromizmir.com_right - sidebar_middle */}
-        <div id="ezoic-pub-ad-placeholder-647"></div>
-      </div>
+    // Reklam sütunları olmadan, doğrudan ana konteyneri kullanıyoruz
+    <div className={styles.pageContainer}>
+      <QuizzesSidebar categories={categories} />
+      <main className={styles.mainContent}>
+        {children}
+      </main>
     </div>
   );
 }
