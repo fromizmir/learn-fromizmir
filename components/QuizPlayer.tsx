@@ -102,11 +102,7 @@ export default function QuizPlayer({ quizData }: { quizData: any }) {
           {/* --- DEĞİŞİKLİK BURADA --- */}
           {/* Yer tutucu metin yerine gerçek Ezoic div'i eklendi */}
           <div id="ezoic-pub-ad-placeholder-651" style={{minHeight: '250px', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px dashed #ccc'}}>
-            <script>
-    ezstandalone.cmd.push(function () {
-        ezstandalone.showAds(651);
-    });
-</script>
+
           </div>
           
           <button onClick={proceedAfterAd} className={styles.nextQuestionBtn} disabled={adCountdown > 0}>
