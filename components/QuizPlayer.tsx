@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import styles from './QuizPlayer.module.css';
 
 export default function QuizPlayer({ quizData }: { quizData: any }) {
@@ -9,7 +9,12 @@ export default function QuizPlayer({ quizData }: { quizData: any }) {
   const [isAnswered, setIsAnswered] = useState(false);
   const [score, setScore] = useState(0);
   const [isQuizFinished, setIsQuizFinished] = useState(false);
-  
+  const [showAdScreen, setShowAdScreen] = useState(false);
+  const [adCountdown, setAdCountdown] = useState(5);
+
+  const explanationRef = useRef<HTMLDivElement>(null);
+  const adScreenRef = useRef<HTMLDivElement>(null);
+
   const question = quizData.sorular[currentQuestionIndex];
   const totalQuestions = quizData.sorular.length;
 
@@ -20,11 +25,19 @@ export default function QuizPlayer({ quizData }: { quizData: any }) {
     if (selectedIndex === question.dogruCevapIndex) {
       setScore(prevScore => prevScore + 10);
     }
+    setTimeout(() => {
+      explanationRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }, 100);
   };
 
   const handleNextQuestion = () => {
-    if (currentQuestionIndex < totalQuestions - 1) {
-      setCurrentQuestionIndex(prevIndex => prevIndex + 1);
+    const nextIndex = currentQuestionIndex + 1;
+    if (nextIndex % 5 === 0 && nextIndex < totalQuestions) {
+      setShowAdScreen(true);
+      return;
+    }
+    if (nextIndex < totalQuestions) {
+      setCurrentQuestionIndex(nextIndex);
       setIsAnswered(false);
       setSelectedAnswerIndex(null);
     } else {
@@ -32,8 +45,56 @@ export default function QuizPlayer({ quizData }: { quizData: any }) {
     }
   };
   
+  const proceedAfterAd = () => {
+    setShowAdScreen(false);
+    const nextIndex = currentQuestionIndex + 1;
+    if (nextIndex < totalQuestions) {
+      setCurrentQuestionIndex(nextIndex);
+      setIsAnswered(false);
+      setSelectedAnswerIndex(null);
+    }
+  };
+
+  useEffect(() => {
+    if (showAdScreen) {
+      if (typeof ezstandalone !== 'undefined') {
+        ezstandalone.define(651);
+        ezstandalone.refresh();
+      }
+      setAdCountdown(5);
+      const timer = setInterval(() => {
+        setAdCountdown(prev => {
+          if (prev <= 1) {
+            clearInterval(timer);
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+      setTimeout(() => {
+        adScreenRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }, 100);
+      return () => clearInterval(timer);
+    }
+  }, [showAdScreen]);
+  
   const handleRestart = () => {
      window.location.href = '/quizzes';
+  };
+
+  if (showAdScreen) {
+    return (
+      <div className={styles.quizPanel} ref={adScreenRef}>
+        <div className={styles.adScreen}>
+          <h3>Advertisement</h3>
+          <div id="ezoic-pub-ad-placeholder-651" style={{minHeight: '250px', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px dashed #ccc'}}>
+          </div>
+          <button onClick={proceedAfterAd} className={styles.nextQuestionBtn} disabled={adCountdown > 0}>
+            {adCountdown > 0 ? `Please wait... (${adCountdown})` : 'Next Question'}
+          </button>
+        </div>
+      </div>
+    );
   }
 
   if (isQuizFinished) {
@@ -49,7 +110,7 @@ export default function QuizPlayer({ quizData }: { quizData: any }) {
       </div>
     );
   }
-  
+
   return (
     <div className={styles.quizPanel}>
       <div className={styles.quizHeader}>
@@ -76,7 +137,7 @@ export default function QuizPlayer({ quizData }: { quizData: any }) {
             );
           })}
         </div>
-        <div>
+        <div ref={explanationRef}>
           {isAnswered && question.aciklama && (
             <div className={styles.explanationArea} dangerouslySetInnerHTML={{ __html: question.aciklama }} />
           )}
