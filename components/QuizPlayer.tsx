@@ -15,6 +15,10 @@ export default function QuizPlayer({ quizData }: { quizData: any }) {
   const explanationRef = useRef<HTMLDivElement>(null);
   const adScreenRef = useRef<HTMLDivElement>(null);
 
+  if (!quizData || !quizData.sorular || quizData.sorular.length === 0) {
+    return <div>Quiz data is not available. Please go back and select another quiz.</div>;
+  }
+
   const question = quizData.sorular[currentQuestionIndex];
   const totalQuestions = quizData.sorular.length;
 
@@ -57,14 +61,10 @@ export default function QuizPlayer({ quizData }: { quizData: any }) {
 
   useEffect(() => {
     if (showAdScreen) {
-      // --- DEĞİŞİKLİK BURADA ---
-      // 'ezstandalone'a 'window' üzerinden erişiyoruz.
       if (typeof window.ezstandalone !== 'undefined') {
         window.ezstandalone.define(651);
         window.ezstandalone.refresh();
       }
-      // --- DEĞİŞİKLİK SONU ---
-
       setAdCountdown(5);
       const timer = setInterval(() => {
         setAdCountdown(prev => {
@@ -75,11 +75,9 @@ export default function QuizPlayer({ quizData }: { quizData: any }) {
           return prev - 1;
         });
       }, 1000);
-      
       setTimeout(() => {
         adScreenRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
       }, 100);
-
       return () => clearInterval(timer);
     }
   }, [showAdScreen]);
@@ -116,7 +114,7 @@ export default function QuizPlayer({ quizData }: { quizData: any }) {
       </div>
     );
   }
-
+  
   return (
     <div className={styles.quizPanel}>
       <div className={styles.quizHeader}>
