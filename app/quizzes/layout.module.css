@@ -3,8 +3,10 @@
 .pageContainer {
     display: flex;
     gap: 24px;
-    padding: 24px;
+    padding: 24px; /* Her yönden eşit boşluk */
     width: 100%;
+    max-width: 1600px; /* Çok geniş ekranlarda içeriğin fazla yayılmasını engelle */
+    margin: 0 auto; /* Sayfayı ortala */
 }
 
 .mainContent, .sidebar {

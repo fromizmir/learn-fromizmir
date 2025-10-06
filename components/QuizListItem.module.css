@@ -1,0 +1,6 @@
+.quizLink { text-decoration: none; color: inherit; display: block; }
+.quizCard { margin-bottom: 15px; border: 1px solid #eee; padding: 20px; border-radius: 8px; cursor: pointer; transition: background-color 0.2s, box-shadow 0.2s; }
+.quizCard:hover { background-color: #f9f9f9; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+.quizTitle { font-size: 1.1rem; margin: 0; color: #007bff; }
+.quizCard:hover .quizTitle { text-decoration: underline; }
+.quizDescription { margin-top: 10px; font-size: 0.9rem; color: #555; }
