@@ -171,4 +171,3 @@ export default function QuizPlayer({ quizData }: { quizData: any }) {
       </div>
     </div>
   );
-}
