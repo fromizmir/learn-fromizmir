@@ -1,11 +1,8 @@
-// Dosya Yolu: app/layout.tsx
-
 import type { Metadata } from "next";
 import { ClerkProvider } from '@clerk/nextjs';
 import Header from '@/components/Header';
 import Script from "next/script";
 
-// --- OLMASI GEREKEN DOĞRU METADATA KISMI ---
 export const metadata: Metadata = {
   title: "Learn English Quizzes | From Izmir",
   description: "Your free AI-powered TOEFL & English learning assistant! Interactive quizzes for grammar, vocabulary, and reading practice.",
@@ -20,9 +17,9 @@ export default function RootLayout({
     <ClerkProvider>
       <html lang="en">
         <head>
-          {/* Ezoic uyarısına göre sıralama düzenlendi */}
-          <Script src="https://the.gatekeeperconsent.com/cmp.min.js" strategy="beforeInteractive" />
-          <Script src="//www.ezojs.com/ezoic/sa.min.js" strategy="beforeInteractive" />
+          {/* Script'lerin doğru sırada ve en performanslı şekilde yüklenmesi için güncellendi */}
+          <Script id="ezoic-cmp" src="https://the.gatekeeperconsent.com/cmp.min.js" strategy="beforeInteractive" />
+          <Script id="ezoic-sa" src="//www.ezojs.com/ezoic/sa.min.js" strategy="beforeInteractive" />
           
           <Script src="https://the.gatekeeperconsent.com/ccpa/v2/standalone.js" async />
           <Script async src="https://fundingchoicesmessages.google.com/i/pub-6517205438926212?ers=1" />

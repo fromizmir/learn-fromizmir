@@ -50,7 +50,15 @@ export default function QuizPlayer({ quizData }: { quizData: any }) {
   };
   
   const proceedAfterAd = () => {
-    setShowAdScreen(false);
+    // Ezoic'in eklediği içeriği manuel olarak temizle
+    const adPlaceholder = document.getElementById('ezoic-pub-ad-placeholder-651');
+    if (adPlaceholder) {
+      adPlaceholder.innerHTML = '';
+    }
+    
+    setShowAdScreen(false); // Reklam ekranını gizle
+    
+    // Bir sonraki soruya geç
     const nextIndex = currentQuestionIndex + 1;
     if (nextIndex < totalQuestions) {
       setCurrentQuestionIndex(nextIndex);

@@ -43,3 +43,21 @@
 .nextQuestionBtn { display: block; margin: 30px auto 0; padding: 12px 30px; font-size: 1.1rem; font-weight: bold; color: white; background-color: #007bff; border: none; border-radius: 8px; cursor: pointer; }
 .finalScore { font-size: 1.5rem; font-weight: bold; text-align: center; margin: 20px 0; }
 .adScreen { display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 40px; min-height: 50vh; }
+/* --- MOBİL İÇİN REKLAM EKRANI STİLLERİ --- */
+@media (max-width: 768px) {
+    .adScreen {
+        padding: 20px;
+    }
+
+    .adScreen h3 {
+        font-size: 1.2rem;
+    }
+    
+    /* Ezoic div'inin mobil'de çok büyümesini engelle */
+    .adScreen > div[id^="ezoic-pub-ad-placeholder"] {
+        min-height: 250px;
+        max-height: 300px;
+        width: 100%;
+        max-width: 320px;
+    }
+}
