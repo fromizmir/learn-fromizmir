@@ -1,8 +1,11 @@
+// Dosya Yolu: app/layout.tsx
+
 import type { Metadata } from "next";
 import { ClerkProvider } from '@clerk/nextjs';
 import Header from '@/components/Header';
 import Script from "next/script";
 
+// --- OLMASI GEREKEN DOĞRU METADATA KISMI ---
 export const metadata: Metadata = {
   title: "Learn English Quizzes | From Izmir",
   description: "Your free AI-powered TOEFL & English learning assistant! Interactive quizzes for grammar, vocabulary, and reading practice.",
@@ -17,9 +20,11 @@ export default function RootLayout({
     <ClerkProvider>
       <html lang="en">
         <head>
-          <Script src="https://the.gatekeeperconsent.com/cmp.min.js" async />
+          {/* Ezoic uyarısına göre sıralama düzenlendi */}
+          <Script src="https://the.gatekeeperconsent.com/cmp.min.js" strategy="beforeInteractive" />
+          <Script src="//www.ezojs.com/ezoic/sa.min.js" strategy="beforeInteractive" />
+          
           <Script src="https://the.gatekeeperconsent.com/ccpa/v2/standalone.js" async />
-          <Script src="//www.ezojs.com/ezoic/sa.min.js" async />
           <Script async src="https://fundingchoicesmessages.google.com/i/pub-6517205438926212?ers=1" />
           <Script async src="https://www.googletagmanager.com/gtag/js?id=G-QKYBK4YQ1T" />
           
@@ -64,13 +69,13 @@ export default function RootLayout({
 
           <Script id="ezoic-display" strategy="lazyOnload">
             {`
-              if (typeof ezstandalone !== 'undefined') {
-                ezstandalone.cmd.push(function() {
-                  ezstandalone.define(648, 647, 652, 651);
+              if (typeof window.ezstandalone !== 'undefined') {
+                window.ezstandalone.cmd.push(function() {
+                  window.ezstandalone.define(648, 647, 652, 651);
                 });
-                ezstandalone.cmd.push(function() {
-                  ezstandalone.enable();
-                  ezstandalone.display();
+                window.ezstandalone.cmd.push(function() {
+                  window.ezstandalone.enable();
+                  window.ezstandalone.display();
                 });
               }
             `}

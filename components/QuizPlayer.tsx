@@ -57,10 +57,14 @@ export default function QuizPlayer({ quizData }: { quizData: any }) {
 
   useEffect(() => {
     if (showAdScreen) {
-      if (typeof ezstandalone !== 'undefined') {
-        ezstandalone.define(651);
-        ezstandalone.refresh();
+      // --- DEĞİŞİKLİK BURADA ---
+      // 'ezstandalone'a 'window' üzerinden erişiyoruz.
+      if (typeof window.ezstandalone !== 'undefined') {
+        window.ezstandalone.define(651);
+        window.ezstandalone.refresh();
       }
+      // --- DEĞİŞİKLİK SONU ---
+
       setAdCountdown(5);
       const timer = setInterval(() => {
         setAdCountdown(prev => {
@@ -71,9 +75,11 @@ export default function QuizPlayer({ quizData }: { quizData: any }) {
           return prev - 1;
         });
       }, 1000);
+      
       setTimeout(() => {
         adScreenRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
       }, 100);
+
       return () => clearInterval(timer);
     }
   }, [showAdScreen]);
