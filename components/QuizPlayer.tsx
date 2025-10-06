@@ -9,14 +9,16 @@ export default function QuizPlayer({ quizData }: { quizData: any }) {
   const [isAnswered, setIsAnswered] = useState(false);
   const [score, setScore] = useState(0);
   const [isQuizFinished, setIsQuizFinished] = useState(false);
-  const [showAdScreen, setShowAdScreen] = useState(false);
+  
+  // --- YENİ REKLAM MANTIĞI ---
+  // Hangi reklam ID'sinin gösterileceğini tutan state
+  const [adUnitIdToShow, setAdUnitIdToShow] = useState<string | null>(null);
   const [adCountdown, setAdCountdown] = useState(5);
 
   const explanationRef = useRef<HTMLDivElement>(null);
-  const adScreenRef = useRef<HTMLDivElement>(null);
 
   if (!quizData || !quizData.sorular || quizData.sorular.length === 0) {
-    return <div>Quiz data is not available. Please go back and select another quiz.</div>;
+    return <div>Quiz data not available. Please go back and select another quiz.</div>;
   }
   const question = quizData.sorular[currentQuestionIndex];
   const totalQuestions = quizData.sorular.length;
@@ -28,7 +30,6 @@ export default function QuizPlayer({ quizData }: { quizData: any }) {
     if (selectedIndex === question.dogruCevapIndex) {
       setScore(prevScore => prevScore + 10);
     }
-    // Otomatik kaydırma özelliği geri geldi
     setTimeout(() => {
       explanationRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }, 100);
@@ -36,11 +37,13 @@ export default function QuizPlayer({ quizData }: { quizData: any }) {
 
   const handleNextQuestion = () => {
     const nextIndex = currentQuestionIndex + 1;
-    // Reklam gösterme özelliği geri geldi
-    if (nextIndex % 5 === 0 && nextIndex < totalQuestions) {
-      setShowAdScreen(true);
-      return;
-    }
+
+    // --- SİZİN STRATEJİNİZ UYGULANDI ---
+    if (nextIndex === 5) { setAdUnitIdToShow('649'); return; }
+    if (nextIndex === 10) { setAdUnitIdToShow('650'); return; }
+    if (nextIndex === 15) { setAdUnitIdToShow('651'); return; }
+    if (nextIndex === 20) { setAdUnitIdToShow('652'); return; }
+
     if (nextIndex < totalQuestions) {
       setCurrentQuestionIndex(nextIndex);
       setIsAnswered(false);
@@ -51,9 +54,11 @@ export default function QuizPlayer({ quizData }: { quizData: any }) {
   };
   
   const proceedAfterAd = () => {
-    const adPlaceholder = document.getElementById('ezoic-pub-ad-placeholder-651');
+    const adPlaceholder = document.getElementById(`ezoic-pub-ad-placeholder-${adUnitIdToShow}`);
     if (adPlaceholder) { adPlaceholder.innerHTML = ''; }
-    setShowAdScreen(false);
+    
+    setAdUnitIdToShow(null); // Reklam ekranını gizle
+    
     const nextIndex = currentQuestionIndex + 1;
     if (nextIndex < totalQuestions) {
       setCurrentQuestionIndex(nextIndex);
@@ -63,33 +68,35 @@ export default function QuizPlayer({ quizData }: { quizData: any }) {
   };
 
   useEffect(() => {
-    if (showAdScreen) {
+    if (adUnitIdToShow) {
       if (typeof window.ezstandalone !== 'undefined') {
-        window.ezstandalone.cmd.push(function() {
-          window.ezstandalone.define(651);
-          window.ezstandalone.enable();
-          window.ezstandalone.display();
-        });
+        const adId = parseInt(adUnitIdToShow);
+        if (!isNaN(adId)) {
+          window.ezstandalone.cmd.push(function() {
+            // Her seferinde doğru ve benzersiz ID'yi tanımla ve göster
+            window.ezstandalone.define(adId);
+            window.ezstandalone.enable();
+            window.ezstandalone.display();
+          });
+        }
       }
       setAdCountdown(5);
       const timer = setInterval(() => {
         setAdCountdown(prev => (prev <= 1 ? 0 : prev - 1));
       }, 1000);
-      setTimeout(() => {
-        adScreenRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      }, 100);
       return () => clearInterval(timer);
     }
-  }, [showAdScreen]);
+  }, [adUnitIdToShow]);
   
   const handleRestart = () => { window.location.href = '/quizzes'; };
 
-  if (showAdScreen) {
+  if (adUnitIdToShow) {
     return (
-      <div className={styles.quizPanel} ref={adScreenRef}>
+      <div className={styles.quizPanel}>
         <div className={styles.adScreen}>
           <h3>Advertisement</h3>
-          <div id="ezoic-pub-ad-placeholder-651" style={{minHeight: '250px', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px dashed #ccc'}}></div>
+          {/* Reklam ID'sini dinamik olarak ata */}
+          <div id={`ezoic-pub-ad-placeholder-${adUnitIdToShow}`} style={{minHeight: '250px', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px dashed #ccc'}}></div>
           <button onClick={proceedAfterAd} className={styles.nextQuestionBtn} disabled={adCountdown > 0}>
             {adCountdown > 0 ? `Please wait... (${adCountdown})` : 'Next Question'}
           </button>
@@ -125,11 +132,8 @@ export default function QuizPlayer({ quizData }: { quizData: any }) {
           {question.secenekler.map((option: string, index: number) => {
             let btnClass = styles.optionBtn;
             if (isAnswered) {
-              if (index === question.dogruCevapIndex) {
-                btnClass += ` ${styles.correct}`;
-              } else if (index === selectedAnswerIndex) {
-                btnClass += ` ${styles.incorrect}`;
-              }
+              if (index === question.dogruCevapIndex) { btnClass += ` ${styles.correct}`; }
+              else if (index === selectedAnswerIndex) { btnClass += ` ${styles.incorrect}`; }
             }
             return (
               <button key={index} onClick={() => handleAnswer(index)} className={btnClass} disabled={isAnswered}>

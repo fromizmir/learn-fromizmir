@@ -52,7 +52,7 @@ export default function RootLayout({
             {`
               if (typeof window.ezstandalone !== 'undefined') {
                 window.ezstandalone.cmd.push(function() {
-                 window.ezstandalone.define(648, 647, 652, 649, 650, 651);
+                 window.ezstandalone.define(647, 648, 649, 650, 651, 652, 653, );
                 });
                 window.ezstandalone.cmd.push(function() {
                   window.ezstandalone.enable();
