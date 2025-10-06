@@ -117,11 +117,8 @@ export default function QuizPlayer({ quizData }: { quizData: any }) {
           <h3>Advertisement</h3>
           {/* EZOIC REKLAM ALANI */}
           {/* ÖNEMLİ: Bu ID'yi Ezoic panelinizde oluşturduğunuz yeni reklam birimi ID'si ile değiştirin */}
-          <div id="ezoic-pub-ad-placeholder-651">
-            
-          </div>
-          
-          <button onClick={proceedAfterAd} className={styles.nextQuestionBtn} disabled={adCountdown > 0}>
+          <div id="ezoic-pub-ad-placeholder-651"></div>
+       <button onClick={proceedAfterAd} className={styles.nextQuestionBtn} disabled={adCountdown > 0}>
             {adCountdown > 0 ? `Please wait... (${adCountdown})` : 'Next Question'}
           </button>
         </div>
