@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import styles from './QuizPlayer.module.css';
+import AdPlaceholder from './AdPlaceholder';
 
 export default function QuizPlayer({ quizData }: { quizData: any }) {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
@@ -9,12 +10,8 @@ export default function QuizPlayer({ quizData }: { quizData: any }) {
   const [isAnswered, setIsAnswered] = useState(false);
   const [score, setScore] = useState(0);
   const [isQuizFinished, setIsQuizFinished] = useState(false);
-  
-  // --- YENİ REKLAM MANTIĞI ---
-  // Hangi reklam ID'sinin gösterileceğini tutan state
   const [adUnitIdToShow, setAdUnitIdToShow] = useState<string | null>(null);
   const [adCountdown, setAdCountdown] = useState(5);
-
   const explanationRef = useRef<HTMLDivElement>(null);
 
   if (!quizData || !quizData.sorular || quizData.sorular.length === 0) {
@@ -37,30 +34,33 @@ export default function QuizPlayer({ quizData }: { quizData: any }) {
 
   const handleNextQuestion = () => {
     const nextIndex = currentQuestionIndex + 1;
+    
+    // Sınavın bitip bitmediğini reklam kontrolünden önce yap
+    if (nextIndex >= totalQuestions) {
+      setIsQuizFinished(true);
+      return;
+    }
 
-    // --- SİZİN STRATEJİNİZ UYGULANDI ---
+    // Reklam aralıklarını kontrol et
     if (nextIndex === 5) { setAdUnitIdToShow('649'); return; }
     if (nextIndex === 10) { setAdUnitIdToShow('650'); return; }
     if (nextIndex === 15) { setAdUnitIdToShow('651'); return; }
     if (nextIndex === 20) { setAdUnitIdToShow('652'); return; }
 
-    if (nextIndex < totalQuestions) {
-      setCurrentQuestionIndex(nextIndex);
-      setIsAnswered(false);
-      setSelectedAnswerIndex(null);
-    } else {
-      setIsQuizFinished(true);
-    }
+    // Normal bir şekilde sonraki soruya geç
+    setCurrentQuestionIndex(nextIndex);
+    setIsAnswered(false);
+    setSelectedAnswerIndex(null);
   };
   
   const proceedAfterAd = () => {
-    const adPlaceholder = document.getElementById(`ezoic-pub-ad-placeholder-${adUnitIdToShow}`);
-    if (adPlaceholder) { adPlaceholder.innerHTML = ''; }
-    
-    setAdUnitIdToShow(null); // Reklam ekranını gizle
-    
+    setAdUnitIdToShow(null);
     const nextIndex = currentQuestionIndex + 1;
-    if (nextIndex < totalQuestions) {
+
+    // Reklamdan sonra sınavın bitip bitmediğini tekrar kontrol et
+    if (nextIndex >= totalQuestions) {
+      setIsQuizFinished(true);
+    } else {
       setCurrentQuestionIndex(nextIndex);
       setIsAnswered(false);
       setSelectedAnswerIndex(null);
@@ -69,17 +69,6 @@ export default function QuizPlayer({ quizData }: { quizData: any }) {
 
   useEffect(() => {
     if (adUnitIdToShow) {
-      if (typeof window.ezstandalone !== 'undefined') {
-        const adId = parseInt(adUnitIdToShow);
-        if (!isNaN(adId)) {
-          window.ezstandalone.cmd.push(function() {
-            // Her seferinde doğru ve benzersiz ID'yi tanımla ve göster
-            window.ezstandalone.define(adId);
-            window.ezstandalone.enable();
-            window.ezstandalone.display();
-          });
-        }
-      }
       setAdCountdown(5);
       const timer = setInterval(() => {
         setAdCountdown(prev => (prev <= 1 ? 0 : prev - 1));
@@ -95,8 +84,7 @@ export default function QuizPlayer({ quizData }: { quizData: any }) {
       <div className={styles.quizPanel}>
         <div className={styles.adScreen}>
           <h3>Advertisement</h3>
-          {/* Reklam ID'sini dinamik olarak ata */}
-          <div id={`ezoic-pub-ad-placeholder-${adUnitIdToShow}`} style={{minHeight: '250px', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px dashed #ccc'}}></div>
+          <AdPlaceholder key={adUnitIdToShow} adId={adUnitIdToShow} />
           <button onClick={proceedAfterAd} className={styles.nextQuestionBtn} disabled={adCountdown > 0}>
             {adCountdown > 0 ? `Please wait... (${adCountdown})` : 'Next Question'}
           </button>
