@@ -10,7 +10,6 @@ async function saveQuizResult(quizId: string, score: number, quizTitle: string) 
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ quizId, score, quizTitle }),
     });
-    console.log("Result saved successfully!");
   } catch (error) {
     console.error("Error saving quiz result:", error);
   }
@@ -22,6 +21,8 @@ export default function QuizPlayer({ quizData }: { quizData: any }) {
   const [isAnswered, setIsAnswered] = useState(false);
   const [score, setScore] = useState(0);
   const [isQuizFinished, setIsQuizFinished] = useState(false);
+
+  // Reklam ekranı state ve geri sayım
   const [showAdScreen, setShowAdScreen] = useState(false);
   const [adCountdown, setAdCountdown] = useState(5);
 
@@ -31,6 +32,7 @@ export default function QuizPlayer({ quizData }: { quizData: any }) {
   const question = quizData.sorular[currentQuestionIndex];
   const totalQuestions = quizData.sorular.length;
 
+  // Cevapla
   const handleAnswer = (selectedIndex: number) => {
     if (isAnswered) return;
     setSelectedAnswerIndex(selectedIndex);
@@ -43,10 +45,14 @@ export default function QuizPlayer({ quizData }: { quizData: any }) {
     }, 100);
   };
 
+  // Sonraki soruya geç
   const handleNextQuestion = () => {
     const nextIndex = currentQuestionIndex + 1;
+    // Eğer 5, 10, 15... gibi soruya geçilecekse reklam ekranı aç
     if (nextIndex % 5 === 0 && nextIndex < totalQuestions) {
       setShowAdScreen(true);
+      setIsAnswered(false);
+      setSelectedAnswerIndex(null);
       return;
     }
     if (nextIndex < totalQuestions) {
@@ -59,20 +65,20 @@ export default function QuizPlayer({ quizData }: { quizData: any }) {
     }
   };
 
+  // Reklamdan sonra devam et
   const proceedAfterAd = () => {
     setShowAdScreen(false);
-    const nextIndex = currentQuestionIndex + 1;
-    if (nextIndex < totalQuestions) {
-      setCurrentQuestionIndex(nextIndex);
-      setIsAnswered(false);
-      setSelectedAnswerIndex(null);
-    }
+    setCurrentQuestionIndex(prev => prev + 1);
+    setIsAnswered(false);
+    setSelectedAnswerIndex(null);
   };
 
-  // Reklam scripti ve geri sayımı hemen başlat
+  // Reklam ekranı açıldığında script ekle ve geri sayım başlat
   useEffect(() => {
     if (showAdScreen) {
-      // Reklam scripti hemen eklenir
+      setAdCountdown(5);
+
+      // Reklam scripti ekle
       const adDiv = document.getElementById('ezoic-pub-ad-placeholder-651');
       if (adDiv && !document.getElementById('ezoic-script-651')) {
         const script = document.createElement('script');
@@ -86,8 +92,7 @@ export default function QuizPlayer({ quizData }: { quizData: any }) {
         adDiv.appendChild(script);
       }
 
-      // Geri sayım başlatılır
-      setAdCountdown(5);
+      // Geri sayım başlat
       const timer = setInterval(() => {
         setAdCountdown(prev => {
           if (prev <= 1) {
@@ -98,12 +103,16 @@ export default function QuizPlayer({ quizData }: { quizData: any }) {
         });
       }, 1000);
 
-      // Reklam ekranına kaydır
       setTimeout(() => {
         adScreenRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
       }, 100);
 
-      return () => clearInterval(timer);
+      // Temizlik: reklam ekranı kapatılınca script silinsin
+      return () => {
+        clearInterval(timer);
+        const oldScript = document.getElementById('ezoic-script-651');
+        if (oldScript) oldScript.remove();
+      };
     }
   }, [showAdScreen]);
 
@@ -111,7 +120,7 @@ export default function QuizPlayer({ quizData }: { quizData: any }) {
     window.location.href = '/quizzes';
   };
 
-  // Reklam ekranı hemen açılır, buton 5 saniye kilitli kalır
+  // Sadece reklam ekranı render edilir
   if (showAdScreen) {
     return (
       <div className={styles.quizPanel} ref={adScreenRef}>
@@ -156,7 +165,7 @@ export default function QuizPlayer({ quizData }: { quizData: any }) {
     );
   }
 
-  // Ana quiz ekranı
+  // Quiz soruları ekranı (reklam divi ve scripti burada YOK!)
   return (
     <div className={styles.quizPanel}>
       <div className={styles.quizHeader}>
