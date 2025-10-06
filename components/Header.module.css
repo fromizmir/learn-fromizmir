@@ -1,0 +1,35 @@
+/* Dosya: components/Header.module.css */
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    border-bottom: 1px solid #eee;
+}
+
+.leftSection, .rightSection {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.logo {
+    font-weight: bold;
+    text-decoration: none;
+    color: inherit;
+}
+
+.navLink {
+    text-decoration: none;
+    color: #333;
+}
+
+/* --- MOBİL UYUMLULUK --- */
+@media (max-width: 768px) {
+    .header {
+        flex-direction: column; /* Öğeleri alt alta sırala */
+        align-items: flex-start; /* Sola hizala */
+        gap: 15px;
+    }
+}

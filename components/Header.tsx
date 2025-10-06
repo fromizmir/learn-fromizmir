@@ -1,36 +1,30 @@
-"use client";
+// Dosya: components/Header.tsx
 
+"use client";
 import { UserButton, SignedIn, SignedOut } from "@clerk/nextjs";
 import Link from "next/link";
+import styles from './Header.module.css'; // Yeni stil dosyasını import et
 
-const Header = () => {
+export default function Header() {
   return (
-    <header style={{ display: 'flex', justifyContent: 'space-between', padding: '20px', borderBottom: '1px solid #eee' }}>
-      <div style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
-        <Link href="/">
+    <header className={styles.header}>
+      <div className={styles.leftSection}>
+        <Link href="/" className={styles.logo}>
           <strong>Learn From Izmir</strong>
         </Link>
-        <Link href="/quizzes">
+        <Link href="/quizzes" className={styles.navLink}>
           Quizzes
         </Link>
       </div>
-      <div>
+      <div className={styles.rightSection}>
         <SignedIn>
           <UserButton afterSignOutUrl="/" />
         </SignedIn>
         <SignedOut>
-          <>
-            <Link href="/sign-in" style={{ marginRight: '10px' }}>
-              Sign In
-            </Link>
-            <Link href="/sign-up">
-              Sign Up
-            </Link>
-          </>
+          <Link href="/sign-in" className={styles.navLink}>Sign In</Link>
+          <Link href="/sign-up" className={styles.navLink}>Sign Up</Link>
         </SignedOut>
       </div>
     </header>
   );
-};
-
-export default Header;
+}
