@@ -69,9 +69,15 @@ export default function QuizPlayer({ quizData }: { quizData: any }) {
 
   useEffect(() => {
     if (showAdScreen) {
+      // --- DEĞİŞİKLİK BURADA ---
+      // Ezoic'in yeni reklam alanını her seferinde görmesini ve yenilemesini sağla
       if (typeof window.ezstandalone !== 'undefined') {
-        window.ezstandalone.define(651);
-        window.ezstandalone.refresh();
+        console.log('Ezoic ad refresh triggered for placeholder 651');
+        window.ezstandalone.cmd.push(function() {
+          window.ezstandalone.define(651);
+          window.ezstandalone.enable();
+          window.ezstandalone.display(); // 'refresh' yerine 'display' daha garantili olabilir
+        });
       }
       setAdCountdown(5);
       const timer = setInterval(() => {

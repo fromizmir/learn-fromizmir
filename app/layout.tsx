@@ -17,14 +17,15 @@ export default function RootLayout({
     <ClerkProvider>
       <html lang="en">
         <head>
-          {/* Script'lerin doğru sırada ve en performanslı şekilde yüklenmesi için güncellendi */}
+        {/* --- DEĞİŞİKLİK BURADA --- */}
+          {/* Ezoic'in istediği kesin sıralamayı garanti altına almak için */}
           <Script id="ezoic-cmp" src="https://the.gatekeeperconsent.com/cmp.min.js" strategy="beforeInteractive" />
           <Script id="ezoic-sa" src="//www.ezojs.com/ezoic/sa.min.js" strategy="beforeInteractive" />
           
-          <Script src="https://the.gatekeeperconsent.com/ccpa/v2/standalone.js" async />
-          <Script async src="https://fundingchoicesmessages.google.com/i/pub-6517205438926212?ers=1" />
+          {/* Diğer script'ler */}
+          <Script src="https://the.gatekeeperconsent.com/ccpa/v2/standalone.js" strategy="lazyOnload" />
+          <Script src="https://fundingchoicesmessages.google.com/i/pub-6517205438926212?ers=1" strategy="lazyOnload" />
           <Script async src="https://www.googletagmanager.com/gtag/js?id=G-QKYBK4YQ1T" />
-          
           <Script id="gtag-init" strategy="afterInteractive">
             {`
               window.dataLayer = window.dataLayer || [];
