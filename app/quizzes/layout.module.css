@@ -1,31 +1,30 @@
-/* === ANA YAPI === */
+/* Dosya: app/quizzes/layout.module.css */
+
 .pageContainer {
     display: flex;
-    gap: 24px; /* Sütunlar arası boşluk */
-    padding: 24px; /* Sayfanın kenarlarındaki boşluk */
+    gap: 24px;
+    padding: 24px;
     width: 100%;
 }
 
-.mainContent {
-    flex-grow: 1;
-    min-width: 0; /* İçeriğin taşmasını engelleyen önemli bir kural */
+.mainContent, .sidebar {
     background-color: #ffffff;
     border-radius: 12px;
     padding: 24px;
     box-shadow: 0 4px 12px rgba(0,0,0,0.05);
 }
 
-/* === SOL MENÜ (SIDEBAR) === */
 .sidebar {
     width: 280px;
     flex-shrink: 0;
     position: sticky;
-    top: 90px; /* Header'ın altına olan mesafe */
+    top: 90px;
     align-self: flex-start;
-    background-color: #ffffff;
-    border-radius: 12px;
-    padding: 24px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+.mainContent {
+    flex-grow: 1;
+    min-width: 0;
 }
 
 .categoryTitle {
@@ -37,8 +36,8 @@
 }
 
 .categoryList {
-    max-height: 350px; /* Menünün yüksekliğini sınırladık */
-    overflow-y: auto; /* Yükseklik aşılırsa kaydırma çubuğu çıkar */
+    max-height: 350px;
+    overflow-y: auto;
 }
 
 .categoryButton {
@@ -47,9 +46,9 @@
     padding: 10px 15px;
     margin-bottom: 5px;
     border-radius: 8px;
-    border: none;
+    border: 1px solid #e0e0e0; /* Daha belirgin bir kenarlık */
     cursor: pointer;
-    background-color: transparent;
+    background-color: #f8f9fa; /* Hafif gri arka plan */
     color: #333;
     font-weight: 500;
     text-align: left;
@@ -58,13 +57,15 @@
 }
 
 .categoryButton:hover {
-    background-color: #f0f2f5;
+    background-color: #e9ecef;
+    border-color: #ccc;
 }
 
 .activeCategory {
     background-color: #007bff;
     color: white;
     font-weight: 600;
+    border-color: #007bff;
 }
 
 .activeCategory:hover {
@@ -74,7 +75,7 @@
 
 /* === MOBİL HAMBURGER MENÜ === */
 .hamburgerButton {
-    display: none; /* Varsayılan olarak gizli */
+    display: none;
     position: fixed;
     top: 85px;
     left: 15px;
@@ -89,18 +90,18 @@
     box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 
-/* === MOBİL UYUMLULUK AYARLARI === */
 @media (max-width: 992px) {
     .pageContainer {
         display: block;
         padding: 0;
+        background-color: transparent; /* Mobilde ana arka plan rengini göster */
     }
 
     .mainContent {
         border-radius: 0;
         box-shadow: none;
         padding: 20px;
-        margin-top: 60px; /* Hamburger butonuna yer açmak için */
+        margin-top: 60px;
     }
 
     .hamburgerButton {
@@ -125,7 +126,6 @@
         transform: translateX(0);
     }
     
-    /* Mobil menünün yüksekliğini artırma */
     .sidebar .categoryList {
         max-height: calc(100vh - 150px);
     }

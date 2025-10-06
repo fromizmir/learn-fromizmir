@@ -61,3 +61,13 @@
         max-width: 320px;
     }
 }
+@media (max-width: 768px) {
+    .adScreen { padding: 20px; }
+    .adScreen h3 { font-size: 1.2rem; }
+    .adScreen > div[id^="ezoic-pub-ad-placeholder"] {
+        min-height: 250px;
+        max-height: 300px;
+        width: 100%;
+        max-width: 320px;
+    }
+}

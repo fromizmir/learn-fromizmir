@@ -11,14 +11,12 @@ export default function QuizPlayer({ quizData }: { quizData: any }) {
   const [isQuizFinished, setIsQuizFinished] = useState(false);
   const [showAdScreen, setShowAdScreen] = useState(false);
   const [adCountdown, setAdCountdown] = useState(5);
-
   const explanationRef = useRef<HTMLDivElement>(null);
   const adScreenRef = useRef<HTMLDivElement>(null);
 
   if (!quizData || !quizData.sorular || quizData.sorular.length === 0) {
     return <div>Quiz data is not available. Please go back and select another quiz.</div>;
   }
-
   const question = quizData.sorular[currentQuestionIndex];
   const totalQuestions = quizData.sorular.length;
 
@@ -50,15 +48,11 @@ export default function QuizPlayer({ quizData }: { quizData: any }) {
   };
   
   const proceedAfterAd = () => {
-    // Ezoic'in eklediği içeriği manuel olarak temizle
     const adPlaceholder = document.getElementById('ezoic-pub-ad-placeholder-651');
     if (adPlaceholder) {
       adPlaceholder.innerHTML = '';
     }
-    
-    setShowAdScreen(false); // Reklam ekranını gizle
-    
-    // Bir sonraki soruya geç
+    setShowAdScreen(false);
     const nextIndex = currentQuestionIndex + 1;
     if (nextIndex < totalQuestions) {
       setCurrentQuestionIndex(nextIndex);
@@ -69,14 +63,11 @@ export default function QuizPlayer({ quizData }: { quizData: any }) {
 
   useEffect(() => {
     if (showAdScreen) {
-      // --- DEĞİŞİKLİK BURADA ---
-      // Ezoic'in yeni reklam alanını her seferinde görmesini ve yenilemesini sağla
       if (typeof window.ezstandalone !== 'undefined') {
-        console.log('Ezoic ad refresh triggered for placeholder 651');
         window.ezstandalone.cmd.push(function() {
           window.ezstandalone.define(651);
           window.ezstandalone.enable();
-          window.ezstandalone.display(); // 'refresh' yerine 'display' daha garantili olabilir
+          window.ezstandalone.display();
         });
       }
       setAdCountdown(5);
@@ -96,17 +87,14 @@ export default function QuizPlayer({ quizData }: { quizData: any }) {
     }
   }, [showAdScreen]);
   
-  const handleRestart = () => {
-     window.location.href = '/quizzes';
-  };
+  const handleRestart = () => { window.location.href = '/quizzes'; };
 
   if (showAdScreen) {
     return (
       <div className={styles.quizPanel} ref={adScreenRef}>
         <div className={styles.adScreen}>
           <h3>Advertisement</h3>
-          <div id="ezoic-pub-ad-placeholder-651" style={{minHeight: '250px', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px dashed #ccc'}}>
-          </div>
+          <div id="ezoic-pub-ad-placeholder-651" style={{minHeight: '250px', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px dashed #ccc'}}></div>
           <button onClick={proceedAfterAd} className={styles.nextQuestionBtn} disabled={adCountdown > 0}>
             {adCountdown > 0 ? `Please wait... (${adCountdown})` : 'Next Question'}
           </button>
