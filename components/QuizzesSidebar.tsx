@@ -26,9 +26,9 @@ export default function QuizzesSidebar({ categories }: { categories: string[] })
                         </Link>
                     ))}
                 </div>
-                {/* Menünün altındaki reklam alanı */}
+                {/* --- YENİ REKLAM ALANI BURADA --- */}
                 <div style={{ marginTop: '20px' }}>
-                    <div id="ezoic-pub-ad-placeholder-652"></div>
+                    <div id="ezoic-pub-ad-placeholder-653"></div>
                 </div>
             </aside>
         </>

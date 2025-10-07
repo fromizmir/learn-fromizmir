@@ -38,7 +38,7 @@
 }
 
 .categoryList {
-    max-height: 350px;
+    max-height: 350px; /* Reklama yer açmak için yüksekliği azalttık */
     overflow-y: auto;
 }
 
