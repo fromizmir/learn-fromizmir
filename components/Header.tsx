@@ -13,6 +13,14 @@ export default function Header() {
           Quizzes
         </Link>
       </div>
+      <div className={styles.rightSection}>
+        <a href="https://fromizmir.com" target="_blank" className={styles.navLink}>
+          Blog
+        </a>
+        <a href="https://openvideo.fromizmir.com/" target="_blank" className={styles.navLink}>
+          Videos
+        </a>
+      </div>
     </header>
   );
 }
