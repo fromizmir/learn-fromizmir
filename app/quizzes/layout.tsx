@@ -1,3 +1,4 @@
+import { Suspense } from 'react';
 import styles from './layout.module.css';
 import QuizzesSidebar from '@/components/QuizzesSidebar';
 
@@ -10,12 +11,11 @@ async function getQuizzes() {
         if (!res.ok) { return []; }
         return res.json();
     } catch (error) {
-        console.error("Failed to fetch quizzes for layout:", error);
         return [];
     }
 }
 
-export default async function QuizzesLayout({ children }: { children: React.ReactNode; }) {
+export default async function QuizzesLayout({ children }: { children: React.ReactNode }) {
     const quizzes = await getQuizzes();
     const categorySet = new Set<string>();
     if (Array.isArray(quizzes)) {
@@ -31,7 +31,9 @@ export default async function QuizzesLayout({ children }: { children: React.Reac
 
     return (
         <div className={styles.pageContainer}>
-            <QuizzesSidebar categories={categories} />
+            <Suspense fallback={<div>Loading...</div>}>
+                <QuizzesSidebar categories={categories} />
+            </Suspense>
             <main className={styles.mainContent}>
                 {children}
             </main>
