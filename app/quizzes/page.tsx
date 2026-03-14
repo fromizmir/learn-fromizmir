@@ -5,13 +5,17 @@ import SearchBar from '@/components/SearchBar';
 async function getQuizzes() {
   const API_ENDPOINT = 'https://fromizmir.com/wp-json/lolonolo-quiz/v16/quizzes';
   const API_KEY = process.env.LOLONOLO_API_KEY;
-  if (!API_KEY) { throw new Error('API Key not found.'); }
-  const res = await fetch(API_ENDPOINT, {
-    headers: { 'Authorization': `Bearer ${API_KEY}` },
-    cache: 'no-store',
-  });
-  if (!res.ok) { throw new Error('Failed to fetch quizzes.'); }
-  return res.json();
+  if (!API_KEY) { return []; }
+  try {
+    const res = await fetch(API_ENDPOINT, {
+      headers: { 'Authorization': `Bearer ${API_KEY}` },
+      cache: 'no-store',
+    });
+    if (!res.ok) { return []; }
+    return res.json();
+  } catch (error) {
+    return [];
+  }
 }
 
 export default async function QuizzesPage({ searchParams }: { searchParams?: { category?: string; search?: string } }) {
@@ -34,9 +38,15 @@ export default async function QuizzesPage({ searchParams }: { searchParams?: { c
         <SearchBar />
       </Suspense>
       <div style={{ marginTop: '20px' }}>
-        {filteredQuizzes.map((quiz: any) => (
-          <QuizListItem key={quiz.id} quiz={quiz} />
-        ))}
+        {filteredQuizzes.length === 0 ? (
+          <p style={{ color: '#888', textAlign: 'center', marginTop: '40px' }}>
+            No quizzes found. Please try again later.
+          </p>
+        ) : (
+          filteredQuizzes.map((quiz: any) => (
+            <QuizListItem key={quiz.id} quiz={quiz} />
+          ))
+        )}
       </div>
     </div>
   );
